@@ -61,12 +61,22 @@ export async function markDayAsOpened(
 
   const updatedDays = [...state.opened_days, dayNumber]
 
-  const { error } = await supabase
+  // 🔐 Actualiza OWNER / DEV
+  const { error: ownerError } = await supabase
     .from("calendar_state")
     .update({ opened_days: updatedDays })
     .eq("owner_token", ownerToken)
 
-  if (error) throw error
+  if (ownerError) throw ownerError
+
+  // 🌍 Actualiza PUBLIC automáticamente
+  const { error: publicError } = await supabase
+    .from("calendar_state")
+    .update({ opened_days: updatedDays })
+    .eq("owner_token", "PUBLIC")
+
+  if (publicError) throw publicError
 
   return updatedDays
 }
+
