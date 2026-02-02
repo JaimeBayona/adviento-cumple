@@ -1,109 +1,117 @@
-import { useEffect, useState } from "react"
-import { getCalendarDays } from "../services/calendar.service"
-import type { CalendarDay } from "../types/calendar"
-import { getToday, isDateLocked, isSameDay } from "../lib/date"
-import CalendarGrid from "../components/CalendarGrid"
-import InfoModal from "../components/InfoModal"
-import { motion } from "framer-motion"
-import { getOwnerToken } from "../lib/token"
+import { useEffect, useState } from "react";
+import { getCalendarDays } from "../services/calendar.service";
+import type { CalendarDay } from "../types/calendar";
+import { getToday, isDateLocked, isSameDay } from "../lib/date";
+import CalendarGrid from "../components/CalendarGrid";
+import InfoModal from "../components/InfoModal";
+import { motion } from "framer-motion";
+import { getOwnerToken } from "../lib/token";
 import {
   getCalendarStateByToken,
   getPublicCalendarState,
   markDayAsOpened,
-} from "../services/calendarState.service"
-import { supabase } from "../lib/supabase"
+} from "../services/calendarState.service";
+import { supabase } from "../lib/supabase";
 
 // 🔹 Importa el registro de días
-import dayComponents from "../days/DayRegistry"
+import dayComponents from "../days/DayRegistry";
 
 export default function Home() {
-  const today = getToday()
+  const today = getToday();
 
-  const [infoMessage, setInfoMessage] = useState("")
-  const [showInfoModal, setShowInfoModal] = useState(false)
+  const [infoMessage, setInfoMessage] = useState("");
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
-  const [days, setDays] = useState<CalendarDay[]>([])
-  const [loading, setLoading] = useState(true)
-  const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null)
+  const [days, setDays] = useState<CalendarDay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
 
-  const [openedDays, setOpenedDays] = useState<number[]>([])
-  const [isPrivate, setIsPrivate] = useState(false)
-  const [isInvalidToken, setIsInvalidToken] = useState(false)
+  const [openedDays, setOpenedDays] = useState<number[]>([]);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [isInvalidToken, setIsInvalidToken] = useState(false);
+
+  function normalizeOpenedDays(raw: any): number[] {
+    if (!Array.isArray(raw)) return [];
+    return raw.map(Number).filter((n) => !isNaN(n));
+  }
 
   // 🔐 CARGA DE ESTADO SEGÚN TOKEN
   useEffect(() => {
     async function loadState() {
-      const token = getOwnerToken()
+      const token = getOwnerToken();
 
       if (token === "") {
-        setIsInvalidToken(true)
-        return
+        setIsInvalidToken(true);
+        return;
       }
 
       try {
         if (token) {
-          setIsPrivate(true)
-          const state = await getCalendarStateByToken(token)
-          setOpenedDays(state.opened_days || [])
+          setIsPrivate(true);
+          const state = await getCalendarStateByToken(token);
+          setOpenedDays(state.opened_days || []);
         } else {
-          setIsPrivate(false)
-          const state = await getPublicCalendarState()
-          setOpenedDays(state.opened_days || [])
+          setIsPrivate(false);
+          const state = await getPublicCalendarState();
+          setOpenedDays(state.opened_days || []);
         }
       } catch {
-        setIsInvalidToken(true)
+        setIsInvalidToken(true);
       }
     }
 
-    loadState()
-  }, [])
+    loadState();
+  }, []);
 
   // 📅 CARGA DE DÍAS
   useEffect(() => {
     getCalendarDays()
       .then(setDays)
-      .finally(() => setLoading(false))
-  }, [])
+      .finally(() => setLoading(false));
+  }, []);
 
-    // 🔴 REALTIME — Escuchar cambios del PUBLIC
-useEffect(() => {
-  // Solo el público escucha realtime
-  if (isPrivate) return
+  // 🔴 REALTIME — Escuchar cambios del PUBLIC
+  useEffect(() => {
+    // ⚠️ Solo público escucha realtime
+    if (isPrivate) return;
 
-  const channel = supabase
-    .channel("public-calendar-state")
-    .on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "calendar_state",
-        filter: "owner_token=eq.PUBLIC",
-      },
-      (payload) => {
-        console.log("🔔 PUBLIC actualizado:", payload)
+    console.log("📡 Suscribiendo a realtime PUBLIC");
 
-        const updated = payload.new?.opened_days
-        if (Array.isArray(updated)) {
-          setOpenedDays(updated.map(Number))
-        }
-      }
-    )
-    .subscribe()
+    const channel = supabase
+      .channel("calendar-public-realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "calendar_state",
+          filter: "owner_token=eq.PUBLIC",
+        },
+        (payload) => {
+          console.log("🔔 Cambio PUBLIC recibido:", payload);
 
-  return () => {
-    supabase.removeChannel(channel)
-  }
-}, [isPrivate])
+          const updated = payload.new?.opened_days;
+          const normalized = normalizeOpenedDays(updated);
+
+          setOpenedDays(normalized);
+        },
+      )
+      .subscribe((status) => {
+        console.log("📡 Realtime status:", status);
+      });
+
+    return () => {
+      console.log("🧹 Cerrando canal realtime");
+      supabase.removeChannel(channel);
+    };
+  }, [isPrivate]);
 
   // 🚫 TOKEN INVÁLIDO → PANTALLA DEDICADA
   if (isInvalidToken) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F1EC]">
         <div className="max-w-md text-center px-6">
-          <h1 className="text-2xl font-black mb-4">
-            Este enlace no es válido
-          </h1>
+          <h1 className="text-2xl font-black mb-4">Este enlace no es válido</h1>
 
           <p className="text-black/60 mb-6">
             El acceso que intentas usar no existe o ya no está disponible.
@@ -117,7 +125,7 @@ useEffect(() => {
           </a>
         </div>
       </div>
-    )
+    );
   }
 
   // ⏳ CARGANDO
@@ -126,11 +134,13 @@ useEffect(() => {
       <div className="min-h-screen flex items-center justify-center bg-[#F5F1EC]">
         <p className="text-sm text-black/60">Cargando…</p>
       </div>
-    )
+    );
   }
 
   // 🔹 Obtiene el componente dinámico
-  const DayComponent = selectedDay ? dayComponents[selectedDay.day_number] : null
+  const DayComponent = selectedDay
+    ? dayComponents[selectedDay.day_number]
+    : null;
 
   return (
     <motion.div
@@ -174,7 +184,7 @@ useEffect(() => {
 
             if (isDateLocked(day.unlock_date, today)) {
               const fechaBonita = new Date(
-                `${day.unlock_date}T00:00:00`
+                `${day.unlock_date}T00:00:00`,
               ).toLocaleDateString("es-ES", {
                 day: "2-digit",
                 month: "long",
@@ -188,7 +198,7 @@ useEffect(() => {
             if (!isPrivate) {
               if (!openedDays.includes(day.day_number)) {
                 setInfoMessage(
-                  "Este día aún no ha sido abierto por el anfitrión ✨"
+                  "Este día aún no ha sido abierto por el anfitrión ✨",
                 );
                 setShowInfoModal(true);
                 return;
@@ -215,5 +225,5 @@ useEffect(() => {
       {/* DÍAS */}
       {DayComponent && <DayComponent onClose={() => setSelectedDay(null)} />}
     </motion.div>
-  )
+  );
 }
