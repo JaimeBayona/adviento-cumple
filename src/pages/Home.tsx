@@ -58,7 +58,14 @@ export default function Home() {
     loadState()
   }, [])
 
-  // 🔴 REALTIME — Escuchar cambios del PUBLIC
+  // 📅 CARGA DE DÍAS
+  useEffect(() => {
+    getCalendarDays()
+      .then(setDays)
+      .finally(() => setLoading(false))
+  }, [])
+
+    // 🔴 REALTIME — Escuchar cambios del PUBLIC
 useEffect(() => {
   // Solo el público escucha realtime
   if (isPrivate) return
@@ -88,14 +95,6 @@ useEffect(() => {
     supabase.removeChannel(channel)
   }
 }, [isPrivate])
-
-
-  // 📅 CARGA DE DÍAS
-  useEffect(() => {
-    getCalendarDays()
-      .then(setDays)
-      .finally(() => setLoading(false))
-  }, [])
 
   // 🚫 TOKEN INVÁLIDO → PANTALLA DEDICADA
   if (isInvalidToken) {
