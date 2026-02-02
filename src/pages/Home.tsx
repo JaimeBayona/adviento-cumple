@@ -1,44 +1,48 @@
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
-import { getCalendarDays } from "../services/calendar.service"
+import { getCalendarDays } from "../services/calendar.service";
 import {
   getCalendarStateByToken,
   getPublicCalendarState,
   markDayAsOpened,
-} from "../services/calendarState.service"
+  resetDevCalendar,
+  openAllDaysDev,
+} from "../services/calendarState.service";
 
-import { supabase } from "../lib/supabase"
-import { getOwnerToken } from "../lib/token"
-import { getToday, isDateLocked, isSameDay } from "../lib/date"
+import { supabase } from "../lib/supabase";
+import { getOwnerToken } from "../lib/token";
+import { getToday, isDateLocked, isSameDay } from "../lib/date";
 
-import CalendarGrid from "../components/CalendarGrid"
-import InfoModal from "../components/InfoModal"
+import CalendarGrid from "../components/CalendarGrid";
+import InfoModal from "../components/InfoModal";
 
-import type { CalendarDay } from "../types/calendar"
-import dayComponents from "../days/DayRegistry"
-import DayPlaceholder from "../days/DayPlaceholder"
+import type { CalendarDay } from "../types/calendar";
+import dayComponents from "../days/DayRegistry";
+import DayPlaceholder from "../days/DayPlaceholder";
 
 function normalizeDays(raw: any): number[] {
-  if (!Array.isArray(raw)) return []
-  return raw.map(Number).filter((n) => !isNaN(n))
+  if (!Array.isArray(raw)) return [];
+  return raw.map(Number).filter((n) => !isNaN(n));
 }
 
 export default function Home() {
-  const today = getToday()
-  const token = getOwnerToken()
-  const isDev = token?.endsWith("-dev") ?? false
+  const today = getToday();
+  const token = getOwnerToken();
+  const isDev = token?.endsWith("-dev") ?? false;
 
-  const [days, setDays] = useState<CalendarDay[]>([])
-  const [openedDays, setOpenedDays] = useState<number[]>([])
-  const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null)
+  const [days, setDays] = useState<CalendarDay[]>([]);
+  const [openedDays, setOpenedDays] = useState<number[]>([]);
+  const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
 
-  const [infoMessage, setInfoMessage] = useState("")
-  const [showInfoModal, setShowInfoModal] = useState(false)
+  const [infoMessage, setInfoMessage] = useState("");
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
-  const [isPrivate, setIsPrivate] = useState(false)
-  const [isInvalidToken, setIsInvalidToken] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [isInvalidToken, setIsInvalidToken] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [respectDates, setRespectDates] = useState(false);
 
   /* ============================
      1️⃣ CARGA INICIAL
@@ -47,21 +51,21 @@ export default function Home() {
     async function init() {
       try {
         if (token) {
-          setIsPrivate(true)
-          const state = await getCalendarStateByToken(token)
-          setOpenedDays(normalizeDays(state.opened_days))
+          setIsPrivate(true);
+          const state = await getCalendarStateByToken(token);
+          setOpenedDays(normalizeDays(state.opened_days));
         } else {
-          setIsPrivate(false)
-          const state = await getPublicCalendarState()
-          setOpenedDays(normalizeDays(state.opened_days))
+          setIsPrivate(false);
+          const state = await getPublicCalendarState();
+          setOpenedDays(normalizeDays(state.opened_days));
         }
       } catch {
-        setIsInvalidToken(true)
+        setIsInvalidToken(true);
       }
     }
 
-    init()
-  }, [token])
+    init();
+  }, [token]);
 
   /* ============================
      2️⃣ CARGA DE DÍAS
@@ -69,14 +73,14 @@ export default function Home() {
   useEffect(() => {
     getCalendarDays()
       .then(setDays)
-      .finally(() => setLoading(false))
-  }, [])
+      .finally(() => setLoading(false));
+  }, []);
 
   /* ============================
      3️⃣ REALTIME (PUBLIC)
   ============================ */
   useEffect(() => {
-    if (isPrivate) return
+    if (isPrivate) return;
 
     const channel = supabase
       .channel("public-calendar-realtime")
@@ -89,16 +93,16 @@ export default function Home() {
           filter: "owner_token=eq.PUBLIC",
         },
         (payload) => {
-          const updated = normalizeDays(payload.new?.opened_days)
-          setOpenedDays(updated)
-        }
+          const updated = normalizeDays(payload.new?.opened_days);
+          setOpenedDays(updated);
+        },
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [isPrivate])
+      supabase.removeChannel(channel);
+    };
+  }, [isPrivate]);
 
   /* ============================
      4️⃣ ESTADOS ESPECIALES
@@ -119,7 +123,7 @@ export default function Home() {
           </a>
         </div>
       </div>
-    )
+    );
   }
 
   if (loading) {
@@ -127,11 +131,10 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center bg-[#F5F1EC]">
         <p className="text-sm text-black/60">Cargando…</p>
       </div>
-    )
+    );
   }
 
-  const DayComponent =
-    selectedDay && dayComponents[selectedDay.day_number]
+  const DayComponent = selectedDay && dayComponents[selectedDay.day_number];
 
   /* ============================
      5️⃣ RENDER
@@ -160,41 +163,43 @@ export default function Home() {
           openedDays={openedDays}
           isDateLocked={isDateLocked}
           isSameDay={isSameDay}
+          respectDates={isDev && respectDates}
           onOpen={async (day) => {
-            // 🔒 BLOQUEO POR FECHA SOLO SI NO ES DEV
-            if (!isDev && isDateLocked(day.unlock_date, today)) {
+            const shouldLockByDate = !isDev || (isDev && respectDates);
+
+            if (shouldLockByDate && isDateLocked(day.unlock_date, today)) {
               const fecha = new Date(
-                `${day.unlock_date}T00:00:00`
+                `${day.unlock_date}T00:00:00`,
               ).toLocaleDateString("es-ES", {
                 day: "2-digit",
                 month: "long",
-              })
+              });
 
-              setInfoMessage(`Este día se abrirá el ${fecha}`)
-              setShowInfoModal(true)
-              return
+              setInfoMessage(`Este día se abrirá el ${fecha}`);
+              setShowInfoModal(true);
+              return;
             }
 
             // 🌍 PUBLIC
             if (!isPrivate) {
               if (!openedDays.includes(day.day_number)) {
                 setInfoMessage(
-                  "Este día aún no ha sido abierto por el anfitrión ✨"
-                )
-                setShowInfoModal(true)
-                return
+                  "Este día aún no ha sido abierto por el anfitrión ✨",
+                );
+                setShowInfoModal(true);
+                return;
               }
 
-              setSelectedDay(day)
-              return
+              setSelectedDay(day);
+              return;
             }
 
             // 🔐 OWNER / DEV
-            setSelectedDay(day)
+            setSelectedDay(day);
 
-            if (!token) return
-            const updated = await markDayAsOpened(token, day.day_number)
-            setOpenedDays(updated)
+            if (!token) return;
+            const updated = await markDayAsOpened(token, day.day_number);
+            setOpenedDays(updated);
           }}
         />
       </div>
@@ -212,6 +217,44 @@ export default function Home() {
             onClose={() => setSelectedDay(null)}
           />
         ))}
+
+      {isDev && (
+        <div className="fixed bottom-4 right-4 z-50 bg-black text-white rounded-2xl p-4 space-y-2 shadow-xl">
+          <p className="text-xs font-bold tracking-widest opacity-70">
+            DEV MODE
+          </p>
+
+          <button
+            className="block w-full text-sm px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20"
+            onClick={async () => {
+              const updated = await resetDevCalendar(token!);
+              setOpenedDays(updated);
+            }}
+          >
+            Resetear días
+          </button>
+
+          <button
+            className="block w-full text-sm px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20"
+            onClick={async () => {
+              const updated = await openAllDaysDev(token!, days.length);
+              setOpenedDays(updated);
+            }}
+          >
+            Abrir todos
+          </button>
+          <button
+            className={`block w-full text-sm px-4 py-2 rounded-lg transition ${
+              respectDates
+                ? "bg-white text-black"
+                : "bg-white/10 hover:bg-white/20"
+            }`}
+            onClick={() => setRespectDates((v) => !v)}
+          >
+            Respetar fechas: {respectDates ? "ON" : "OFF"}
+          </button>
+        </div>
+      )}
     </motion.div>
-  )
+  );
 }

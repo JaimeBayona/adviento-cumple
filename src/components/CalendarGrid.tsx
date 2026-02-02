@@ -1,7 +1,6 @@
 import { motion } from "framer-motion"
 import type { CalendarDay } from "../types/calendar"
 import CalendarDayCard from "./CalendarDayCard"
-import { getOwnerToken } from "../lib/token"
 
 interface Props {
   days: CalendarDay[]
@@ -10,6 +9,9 @@ interface Props {
   onOpen: (day: CalendarDay) => void
   isDateLocked: (unlockDate: string, today: string) => boolean
   isSameDay: (date1: string, date2: string) => boolean
+
+  // 🧪 DEV: forzar comportamiento real por fecha
+  respectDates?: boolean
 }
 
 export default function CalendarGrid({
@@ -19,28 +21,28 @@ export default function CalendarGrid({
   onOpen,
   isDateLocked,
   isSameDay,
+  respectDates = false,
 }: Props) {
-  // 🔧 Detectar modo DEV (no afecta PROD)
-  const token =
-    typeof window !== "undefined" ? getOwnerToken() : null
-  const isDev = token?.endsWith("-dev")
-
   return (
     <motion.ul className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {days.map((day) => {
-        // 🔥 OVERRIDE: en DEV nunca está bloqueado
-        const locked = isDev
-          ? false
-          : isDateLocked(day.unlock_date, today)
-
+        const lockedByDate = isDateLocked(day.unlock_date, today)
         const todayDay = isSameDay(day.unlock_date, today)
-        const isOpened = openedDays.includes(day.day_number)
+
+        // 🔒 VISUAL REAL: si se respetan fechas y está bloqueado
+        const isLocked = respectDates ? lockedByDate : false
+
+        // 🔒 VISUAL REAL: aunque esté abierto en DEV, se ve cerrado
+        const isOpened =
+          respectDates && lockedByDate
+            ? false
+            : openedDays.includes(day.day_number)
 
         return (
           <CalendarDayCard
             key={day.id}
             day={day}
-            isLocked={locked}
+            isLocked={isLocked}
             isToday={todayDay}
             isOpened={isOpened}
             onOpen={onOpen}

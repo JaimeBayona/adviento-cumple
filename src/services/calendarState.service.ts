@@ -90,3 +90,39 @@ export async function markDayAsOpened(
 
   return updatedOwnerDays
 }
+
+/**
+ * 🧪 DEV — Resetear días
+ */
+export async function resetDevCalendar(ownerToken: string) {
+  if (!ownerToken.endsWith("-dev")) return []
+
+  const { error } = await supabase
+    .from("calendar_state")
+    .update({ opened_days: [] })
+    .eq("owner_token", ownerToken)
+
+  if (error) throw error
+  return []
+}
+
+/**
+ * 🧪 DEV — Abrir todos los días
+ */
+export async function openAllDaysDev(
+  ownerToken: string,
+  totalDays: number
+) {
+  if (!ownerToken.endsWith("-dev")) return []
+
+  const allDays = Array.from({ length: totalDays }, (_, i) => i + 1)
+
+  const { error } = await supabase
+    .from("calendar_state")
+    .update({ opened_days: allDays })
+    .eq("owner_token", ownerToken)
+
+  if (error) throw error
+  return allDays
+}
+
