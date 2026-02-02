@@ -7,7 +7,6 @@ function normalizeOpenedDays(raw: any): number[] {
 
 /**
  * 🔐 OWNER / DEV
- * SOLO tokens existentes
  */
 export async function getCalendarStateByToken(ownerToken: string) {
   const { data, error } = await supabase
@@ -27,7 +26,7 @@ export async function getCalendarStateByToken(ownerToken: string) {
 }
 
 /**
- * 🌍 PÚBLICO (estado global)
+ * 🌍 PUBLIC
  */
 export async function getPublicCalendarState() {
   const { data, error } = await supabase
@@ -47,36 +46,47 @@ export async function getPublicCalendarState() {
 }
 
 /**
- * 🔓 Abrir día (solo owner/dev)
+ * 🔓 Abrir día
  */
 export async function markDayAsOpened(
   ownerToken: string,
   dayNumber: number
 ) {
-  const state = await getCalendarStateByToken(ownerToken)
+  // 1️⃣ Estado OWNER / DEV
+  const ownerState = await getCalendarStateByToken(ownerToken)
 
-  if (state.opened_days.includes(dayNumber)) {
-    return state.opened_days
+  if (ownerState.opened_days.includes(dayNumber)) {
+    return ownerState.opened_days
   }
 
-  const updatedDays = [...state.opened_days, dayNumber]
+  const updatedOwnerDays = [...ownerState.opened_days, dayNumber]
 
-  // 🔐 Actualiza OWNER / DEV
+  // 2️⃣ Guardar OWNER / DEV
   const { error: ownerError } = await supabase
     .from("calendar_state")
-    .update({ opened_days: updatedDays })
+    .update({ opened_days: updatedOwnerDays })
     .eq("owner_token", ownerToken)
 
   if (ownerError) throw ownerError
 
-  // 🌍 Actualiza PUBLIC automáticamente
-  const { error: publicError } = await supabase
-    .from("calendar_state")
-    .update({ opened_days: updatedDays })
-    .eq("owner_token", "PUBLIC")
+  // 3️⃣ SOLO el OWNER REAL afecta al PUBLIC
+  if (!ownerToken.endsWith("-dev")) {
+    const publicState = await getPublicCalendarState()
 
-  if (publicError) throw publicError
+    if (!publicState.opened_days.includes(dayNumber)) {
+      const updatedPublicDays = [
+        ...publicState.opened_days,
+        dayNumber,
+      ]
 
-  return updatedDays
+      const { error: publicError } = await supabase
+        .from("calendar_state")
+        .update({ opened_days: updatedPublicDays })
+        .eq("owner_token", "PUBLIC")
+
+      if (publicError) throw publicError
+    }
+  }
+
+  return updatedOwnerDays
 }
-
