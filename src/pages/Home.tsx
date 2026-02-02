@@ -11,6 +11,7 @@ import {
   getPublicCalendarState,
   markDayAsOpened,
 } from "../services/calendarState.service"
+import { supabase } from "../lib/supabase"
 
 // 🔹 Importa el registro de días
 import dayComponents from "../days/DayRegistry"
@@ -56,6 +57,38 @@ export default function Home() {
 
     loadState()
   }, [])
+
+  // 🔴 REALTIME — Escuchar cambios del PUBLIC
+useEffect(() => {
+  // Solo el público escucha realtime
+  if (isPrivate) return
+
+  const channel = supabase
+    .channel("public-calendar-state")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "calendar_state",
+        filter: "owner_token=eq.PUBLIC",
+      },
+      (payload) => {
+        console.log("🔔 PUBLIC actualizado:", payload)
+
+        const updated = payload.new?.opened_days
+        if (Array.isArray(updated)) {
+          setOpenedDays(updated.map(Number))
+        }
+      }
+    )
+    .subscribe()
+
+  return () => {
+    supabase.removeChannel(channel)
+  }
+}, [isPrivate])
+
 
   // 📅 CARGA DE DÍAS
   useEffect(() => {
