@@ -1,5 +1,8 @@
 import { supabase } from "../lib/supabase"
 
+/**
+ * Normaliza opened_days para evitar null / strings
+ */
 function normalizeOpenedDays(raw: any): number[] {
   if (!Array.isArray(raw)) return []
   return raw.map(Number).filter((n) => !isNaN(n))
@@ -7,7 +10,7 @@ function normalizeOpenedDays(raw: any): number[] {
 
 /**
  * 🔐 OWNER / DEV
- * SOLO tokens existentes
+ * Sirve SOLO para validar el token
  */
 export async function getCalendarStateByToken(ownerToken: string) {
   const { data, error } = await supabase
@@ -27,7 +30,8 @@ export async function getCalendarStateByToken(ownerToken: string) {
 }
 
 /**
- * 🌍 PÚBLICO (estado global)
+ * 🌍 PÚBLICO
+ * Estado GLOBAL real del calendario
  */
 export async function getPublicCalendarState() {
   const { data, error } = await supabase
@@ -47,24 +51,32 @@ export async function getPublicCalendarState() {
 }
 
 /**
- * 🔓 Abrir día (solo owner/dev)
+ * 🔓 Abrir día
+ * - OWNER / DEV: solo AUTORIZAN
+ * - El día se abre PARA TODOS (PUBLIC)
  */
 export async function markDayAsOpened(
   ownerToken: string,
   dayNumber: number
 ) {
-  const state = await getCalendarStateByToken(ownerToken)
+  // 1️⃣ Validar que el token sea válido
+  await getCalendarStateByToken(ownerToken)
 
-  if (state.opened_days.includes(dayNumber)) {
-    return state.opened_days
+  // 2️⃣ Obtener estado público actual
+  const publicState = await getPublicCalendarState()
+
+  // 3️⃣ Si ya está abierto, no hacer nada
+  if (publicState.opened_days.includes(dayNumber)) {
+    return publicState.opened_days
   }
 
-  const updatedDays = [...state.opened_days, dayNumber]
+  const updatedDays = [...publicState.opened_days, dayNumber]
 
+  // 4️⃣ Guardar el nuevo estado GLOBAL
   const { error } = await supabase
     .from("calendar_state")
     .update({ opened_days: updatedDays })
-    .eq("owner_token", ownerToken)
+    .eq("owner_token", "PUBLIC")
 
   if (error) throw error
 
