@@ -17,6 +17,7 @@ import InfoModal from "../components/InfoModal"
 
 import type { CalendarDay } from "../types/calendar"
 import dayComponents from "../days/DayRegistry"
+import DayPlaceholder from "../days/DayPlaceholder"
 
 function normalizeDays(raw: any): number[] {
   if (!Array.isArray(raw)) return []
@@ -25,6 +26,8 @@ function normalizeDays(raw: any): number[] {
 
 export default function Home() {
   const today = getToday()
+  const token = getOwnerToken()
+  const isDev = token?.endsWith("-dev") ?? false
 
   const [days, setDays] = useState<CalendarDay[]>([])
   const [openedDays, setOpenedDays] = useState<number[]>([])
@@ -38,12 +41,10 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
 
   /* ============================
-     1️⃣ CARGA INICIAL (TOKEN)
+     1️⃣ CARGA INICIAL
   ============================ */
   useEffect(() => {
     async function init() {
-      const token = getOwnerToken()
-
       try {
         if (token) {
           setIsPrivate(true)
@@ -60,7 +61,7 @@ export default function Home() {
     }
 
     init()
-  }, [])
+  }, [token])
 
   /* ============================
      2️⃣ CARGA DE DÍAS
@@ -72,7 +73,7 @@ export default function Home() {
   }, [])
 
   /* ============================
-     3️⃣ REALTIME — SOLO PUBLIC
+     3️⃣ REALTIME (PUBLIC)
   ============================ */
   useEffect(() => {
     if (isPrivate) return
@@ -129,9 +130,8 @@ export default function Home() {
     )
   }
 
-  const DayComponent = selectedDay
-    ? dayComponents[selectedDay.day_number]
-    : null
+  const DayComponent =
+    selectedDay && dayComponents[selectedDay.day_number]
 
   /* ============================
      5️⃣ RENDER
@@ -161,7 +161,8 @@ export default function Home() {
           isDateLocked={isDateLocked}
           isSameDay={isSameDay}
           onOpen={async (day) => {
-            if (isDateLocked(day.unlock_date, today)) {
+            // 🔒 BLOQUEO POR FECHA SOLO SI NO ES DEV
+            if (!isDev && isDateLocked(day.unlock_date, today)) {
               const fecha = new Date(
                 `${day.unlock_date}T00:00:00`
               ).toLocaleDateString("es-ES", {
@@ -174,6 +175,7 @@ export default function Home() {
               return
             }
 
+            // 🌍 PUBLIC
             if (!isPrivate) {
               if (!openedDays.includes(day.day_number)) {
                 setInfoMessage(
@@ -187,10 +189,10 @@ export default function Home() {
               return
             }
 
+            // 🔐 OWNER / DEV
             setSelectedDay(day)
-            const token = getOwnerToken()
-            if (!token) return
 
+            if (!token) return
             const updated = await markDayAsOpened(token, day.day_number)
             setOpenedDays(updated)
           }}
@@ -201,7 +203,15 @@ export default function Home() {
         {infoMessage}
       </InfoModal>
 
-      {DayComponent && <DayComponent onClose={() => setSelectedDay(null)} />}
+      {selectedDay &&
+        (DayComponent ? (
+          <DayComponent onClose={() => setSelectedDay(null)} />
+        ) : (
+          <DayPlaceholder
+            day={selectedDay.day_number}
+            onClose={() => setSelectedDay(null)}
+          />
+        ))}
     </motion.div>
   )
 }

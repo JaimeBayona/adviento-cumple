@@ -1,6 +1,7 @@
 import { motion } from "framer-motion"
 import type { CalendarDay } from "../types/calendar"
 import CalendarDayCard from "./CalendarDayCard"
+import { getOwnerToken } from "../lib/token"
 
 interface Props {
   days: CalendarDay[]
@@ -19,10 +20,19 @@ export default function CalendarGrid({
   isDateLocked,
   isSameDay,
 }: Props) {
+  // 🔧 Detectar modo DEV (no afecta PROD)
+  const token =
+    typeof window !== "undefined" ? getOwnerToken() : null
+  const isDev = token?.endsWith("-dev")
+
   return (
     <motion.ul className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {days.map((day) => {
-        const locked = isDateLocked(day.unlock_date, today)
+        // 🔥 OVERRIDE: en DEV nunca está bloqueado
+        const locked = isDev
+          ? false
+          : isDateLocked(day.unlock_date, today)
+
         const todayDay = isSameDay(day.unlock_date, today)
         const isOpened = openedDays.includes(day.day_number)
 
@@ -40,4 +50,3 @@ export default function CalendarGrid({
     </motion.ul>
   )
 }
-
