@@ -1,0 +1,73 @@
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/Manrope.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  src: url('/fonts/Newsreader.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter.ttf') format('truetype');
+}
+
+
+@import "tailwindcss";
+
+/* === DESIGN TOKENS === */
+:root {
+  --color-primary: #d91e27;
+  --color-beige: #f5f2ed;
+  --color-lilac: #AA98A9;
+  --color-muted-green: #aebfa1;
+  --color-charcoal: #1a1a1a;
+  --color-beige-x: #D6AF7D;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+@theme {
+    --color-primary: #d91e27;
+    --color-beige: #f5f2ed;
+    --color-lilac: #e2daeb;
+    --color-muted-green: #aebfa1;
+    --color-charcoal: #1a1a1a;
+    --color-beige-x: #D6AF7D;
+    --font-manrope: Manrope, serif;
+    --font-inter: Inter, serif;
+    --font-newsreader: Newsreader, serif;
+}
+
+body {
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 768px) {
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.25) transparent;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.25);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255,255,255,0.4);
+  }
+}
+
+
