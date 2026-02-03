@@ -163,7 +163,8 @@ export default function Home() {
           openedDays={openedDays}
           isDateLocked={isDateLocked}
           isSameDay={isSameDay}
-          respectDates={isDev && respectDates}
+          isDev={isDev}
+          respectDates={respectDates}
           onOpen={async (day) => {
             const shouldLockByDate = !isDev || (isDev && respectDates);
 

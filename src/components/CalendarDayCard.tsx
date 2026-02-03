@@ -31,7 +31,7 @@ export default function CalendarDayCard({
   const bgClasses = () => {
     // 🔒 FUTURO BLOQUEADO (prioridad máxima)
     if (isLocked) {
-      return "bg-neutral-900 text-white/60 cursor-not-allowed"
+      return "bg-neutral-900 text-white/60"
     }
 
     // 🔥 HOY
