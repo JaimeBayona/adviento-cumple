@@ -15,7 +15,12 @@ export default function InfoModal({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 px-4"
+          className="
+            fixed inset-0 z-60
+            flex items-center justify-center
+            bg-black/50 backdrop-blur-sm
+            px-4
+          "
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -23,24 +28,42 @@ export default function InfoModal({
         >
           <motion.div
             onClick={(e) => e.stopPropagation()}
-            initial={{ scale: 0.95, y: 10, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.95, y: 10, opacity: 0 }}
+            initial={{ y: 28, opacity: 0, scale: 0.97 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 28, opacity: 0, scale: 0.97 }}
+            transition={{
+              duration: 0.35,
+              ease: "easeOut",
+            }}
             className="
               w-full
               max-w-sm
+              rounded-3xl
               bg-white
-              rounded-2xl
-              p-6
-              text-center
-              shadow-xl
+              px-6 py-7 sm:px-8 sm:py-8
+              shadow-[0_20px_50px_rgba(0,0,0,0.25)]
             "
           >
-            <p className="text-sm text-black/80">{children}</p>
+            {/* CONTENIDO LIBRE DESDE HOME */}
+            <div className="text-center text-sm sm:text-base text-black/80 leading-relaxed">
+              {children}
+            </div>
 
+            {/* BOTÓN */}
             <button
               onClick={onClose}
-              className="mt-6 w-full rounded-xl bg-black py-2 text-white font-semibold"
+              className="
+                mt-7
+                w-full
+                rounded-xl
+                bg-black
+                py-3
+                text-white
+                font-semibold
+                transition
+                hover:bg-black/90
+                active:scale-[0.98]
+              "
             >
               Entendido
             </button>
