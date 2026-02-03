@@ -1,13 +1,13 @@
-import { motion } from "framer-motion";
-import type { CalendarDay } from "../types/calendar";
-import { LockKeyhole } from "lucide-react";
+import { motion } from "framer-motion"
+import type { CalendarDay } from "../types/calendar"
+import { LockKeyhole } from "lucide-react"
 
 interface Props {
-  day: CalendarDay;
-  isLocked: boolean;
-  isToday: boolean;
-  isOpened: boolean;
-  onOpen: (day: CalendarDay) => void;
+  day: CalendarDay
+  isLocked: boolean
+  isToday: boolean
+  isOpened: boolean
+  onOpen: (day: CalendarDay) => void
 }
 
 export default function CalendarDayCard({
@@ -21,19 +21,20 @@ export default function CalendarDayCard({
    * 💓 Palpita SOLO si:
    * - no está bloqueado
    * - no está abierto
+   * - no es futuro
    */
-  const shouldHeartbeat = !isLocked && !isOpened;
+  const shouldHeartbeat = !isLocked && !isOpened
 
   /**
-   * 🎨 Colores por estado
+   * 🎨 Colores por estado (LOCKED MANDA)
    */
   const bgClasses = () => {
-    // 🔒 Futuro bloqueado
+    // 🔒 FUTURO BLOQUEADO (prioridad máxima)
     if (isLocked) {
-      return "bg-neutral-900 text-white/60";
+      return "bg-neutral-900 text-white/60 cursor-not-allowed"
     }
 
-    // 🔥 HOY (siempre destacado)
+    // 🔥 HOY
     if (isToday) {
       return `
         bg-[#C6B7D8]
@@ -41,17 +42,17 @@ export default function CalendarDayCard({
         shadow-[0_8px_30px_rgba(0,0,0,0.18)]
         ring-2
         ring-black/20
-      `;
+      `
     }
 
     // 🟣 Pasado no abierto
     if (!isOpened) {
-      return "bg-[#B7CBB2] text-black";
+      return "bg-[#B7CBB2] text-black"
     }
 
     // ⚪ Abierto (pasado)
-    return "bg-[#4A4A4A] text-white/70";
-  };
+    return "bg-[#4A4A4A] text-white/70"
+  }
 
   return (
     <motion.li
@@ -80,7 +81,6 @@ export default function CalendarDayCard({
         items-center
         justify-center
         rounded-2xl
-        cursor-pointer
         select-none
         transition-all
         ${bgClasses()}
@@ -88,24 +88,24 @@ export default function CalendarDayCard({
     >
       {isLocked ? (
         <div className="relative flex items-center justify-center">
-          {/* Número grande y difuminado detrás */}
+          {/* Número grande detrás */}
           <span className="absolute text-6xl md:text-8xl font-black opacity-10">
             {day.day_number.toString().padStart(2, "0")}
           </span>
 
-          {/* Candado encima */}
+          {/* Candado */}
           <span className="relative">
             <LockKeyhole size={30} />
           </span>
         </div>
       ) : (
         <div className="flex flex-col items-center">
-          {/* Número normal */}
+          {/* Número */}
           <span className="text-3xl md:text-5xl font-black">
             {day.day_number.toString().padStart(2, "0")}
           </span>
 
-          {/* Texto HOY solo si corresponde */}
+          {/* HOY */}
           {isToday && (
             <span className="mt-2 text-[11px] font-bold tracking-widest">
               HOY
@@ -114,5 +114,5 @@ export default function CalendarDayCard({
         </div>
       )}
     </motion.li>
-  );
+  )
 }
