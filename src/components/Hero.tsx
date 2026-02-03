@@ -1,7 +1,6 @@
-import { motion, useReducedMotion } from "framer-motion"
+import { motion } from "framer-motion"
 
 export default function Hero() {
-  const reduceMotion = useReducedMotion()
 
   return (
     <motion.header
