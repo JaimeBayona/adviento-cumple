@@ -21,6 +21,10 @@ import type { CalendarDay } from "../types/calendar";
 import dayComponents from "../days/DayRegistry";
 import DayPlaceholder from "../days/DayPlaceholder";
 
+import DevTools from "../components/DevTools"
+
+import Hero from "../components/Hero"
+
 function normalizeDays(raw: any): number[] {
   if (!Array.isArray(raw)) return [];
   return raw.map(Number).filter((n) => !isNaN(n));
@@ -148,14 +152,7 @@ export default function Home() {
     >
       <div className="mx-auto max-w-[1300px] px-6 pb-24">
         {/* HEADER */}
-        <header className="pt-12 pb-16">
-          <p className="text-primary text-[10px] font-black uppercase tracking-[0.5em] mb-4">
-            MARILYN : MM
-          </p>
-          <h1 className="text-4xl md:text-7xl font-black uppercase leading-tight">
-            Veinte días de <br /> Elegancia y Anticipación
-          </h1>
-        </header>
+        <Hero />
 
         <CalendarGrid
           days={days}
@@ -220,42 +217,20 @@ export default function Home() {
         ))}
 
       {isDev && (
-        <div className="fixed bottom-4 right-4 z-50 bg-black text-white rounded-2xl p-4 space-y-2 shadow-xl">
-          <p className="text-xs font-bold tracking-widest opacity-70">
-            DEV MODE
-          </p>
+  <DevTools
+    respectDates={respectDates}
+    setRespectDates={setRespectDates}
+    onReset={async () => {
+      const updated = await resetDevCalendar(token!)
+      setOpenedDays(updated)
+    }}
+    onOpenAll={async () => {
+      const updated = await openAllDaysDev(token!, days.length)
+      setOpenedDays(updated)
+    }}
+  />
+)}
 
-          <button
-            className="block w-full text-sm px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20"
-            onClick={async () => {
-              const updated = await resetDevCalendar(token!);
-              setOpenedDays(updated);
-            }}
-          >
-            Resetear días
-          </button>
-
-          <button
-            className="block w-full text-sm px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20"
-            onClick={async () => {
-              const updated = await openAllDaysDev(token!, days.length);
-              setOpenedDays(updated);
-            }}
-          >
-            Abrir todos
-          </button>
-          <button
-            className={`block w-full text-sm px-4 py-2 rounded-lg transition ${
-              respectDates
-                ? "bg-white text-black"
-                : "bg-white/10 hover:bg-white/20"
-            }`}
-            onClick={() => setRespectDates((v) => !v)}
-          >
-            Respetar fechas: {respectDates ? "ON" : "OFF"}
-          </button>
-        </div>
-      )}
     </motion.div>
   );
 }

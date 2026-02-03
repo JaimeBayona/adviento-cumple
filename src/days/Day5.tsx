@@ -1,159 +1,210 @@
-import { motion, useScroll, useTransform } from "framer-motion"
-import { useEffect, useRef, useMemo } from "react"
-import { X } from "lucide-react"
-import "../index.css"
+import { motion, AnimatePresence } from "framer-motion"
+import { useState } from "react"
+import {
+  X,
+  Play,
+  Hourglass,
+  Sparkles,
+  Infinity as InfinityIcon,
+  Heart,
+} from "lucide-react"
 
-const phrases = [
-  "Gracias por estar incluso cuando no sabías qué decir.",
-  "Gracias por el apoyo silencioso.",
-  "Gracias por quedarte cuando otros se fueron.",
-  "Gracias por hacerme reír en días difíciles.",
-  "Gracias por no pedir explicaciones.",
-  "Gracias por entender mis silencios.",
-  "Gracias por acompañar sin invadir.",
-  "Gracias por los recuerdos que no se olvidan.",
-  "Gracias por hacer ligero lo pesado.",
-  "Gracias por escuchar sin juzgar.",
-  "Gracias por la paciencia infinita.",
-  "Gracias por compartir risas pequeñas.",
-  "Gracias por sostener sin atar.",
-  "Gracias por simplemente estar."
-]
+export default function Day5({ onClose }: { onClose: () => void }) {
+  const [step, setStep] = useState<0 | 1 | 2>(0)
+  const [revealed, setRevealed] = useState<number[]>([])
 
-export default function Day4({ onClose }: { onClose: () => void }) {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const moments = [
+    {
+      label: "EL PRIMER MENSAJE",
+      text: `"Hola, ¿cómo estás?" — El inicio de todo.`,
+      icon: Play,
+    },
+    {
+      label: "EL SILENCIO",
+      text: "El día que no hablamos.",
+      icon: Hourglass,
+    },
+    {
+      label: "LA RISA",
+      text: "La risa inesperada.",
+      icon: Sparkles,
+    },
+    {
+      label: "HOY",
+      text: "Y todo lo que somos ahora.",
+      icon: InfinityIcon,
+    },
+  ]
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden"
-    document.body.style.touchAction = "none"
+  function reveal(index: number) {
+    const alreadyRevealed = revealed.includes(index)
 
-    return () => {
-      document.body.style.overflow = ""
-      document.body.style.touchAction = ""
+    if (!alreadyRevealed) {
+      setRevealed((r) => [...r, index])
     }
-  }, [])
 
-  const { scrollYProgress } = useScroll({
-    container: containerRef
-  })
-
-  const dotY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
-
-  /* offsets internos y seguros */
-  const horizontalOffsets = useMemo(() => {
-    return phrases.map(() => Math.random() * 64 - 32) // -32px a +32px
-  }, [])
+    // Solo la primera vez que se revela el infinito
+    if (index === moments.length - 1 && !alreadyRevealed) {
+      setTimeout(() => setStep(2), 2000)
+    }
+  }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-center">
+    <motion.div
+      className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      {/* CONTENEDOR */}
       <motion.div
-        initial={{ opacity: 0, y: 60 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 60 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
         className="
           relative
-          w-full h-[100dvh]
-          md:h-[90vh] md:max-w-5xl
-          rounded-none md:rounded-2xl
+          w-full
+          h-full
+          md:h-auto
+          md:max-w-[720px]
+          bg-[#F9F6F1]
+          md:rounded-3xl
+          p-6
+          md:p-10
           overflow-hidden
-          shadow-2xl
         "
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
       >
-        {/* CLOSE */}
+        {/* CERRAR */}
         <button
           onClick={onClose}
-          onWheel={(e) => e.stopPropagation()}
-          className="absolute top-4 right-4 z-50 text-white/70 hover:text-white"
+          className="absolute top-6 right-6 text-black/50 hover:text-[#534CE7] transition"
         >
-          <X size={28} />
+          <X />
         </button>
 
-        {/* BACKGROUND */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#1f7a3a_0%,_#0b2e1a_100%)]" />
-
-        {/* CONTENT */}
-        <div
-          ref={containerRef}
-          className="
-            relative z-10 h-full overflow-y-auto px-8 md:px-20 py-20
-            md:scrollbar-custom
-          "
-        >
-          {/* TITLE */}
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="
-            text-center
-            tracking-[0.15em] font-newsreader italic
-          text-white/80 text-2xl md:text-4xl mb-20"
-          >
-            Los hilos de nuestro tiempo…
-          </motion.h2>
-
-          <div className="relative flex gap-10">
-            {/* LINE */}
-            <div className="relative w-6 flex justify-center shrink-0">
-              <div className="absolute top-0 bottom-0 w-[0.2em] bg-[#ee8c2b]/20" />
+        <AnimatePresence mode="wait">
+          {/* ================= STEP 0 ================= */}
+          {step === 0 && (
+            <motion.div
+              key="intro"
+              className="h-full flex flex-col items-center justify-center text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setStep(1)}
+            >
               <motion.div
-                style={{ top: dotY }}
-                className="absolute w-2.5 h-2.5 rounded-full bg-[#ee8c2b] shadow-[0_0_8px_#ee8c2b]"
-              />
-            </div>
+                className="text-[#534CE7] mb-6"
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{
+                  duration: 1.6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <Heart size={56} fill="currentColor" />
+              </motion.div>
 
-            {/* TEXT COLUMN */}
-            <div className="flex-1 pb-40">
-              {/* 🔹 MARCO CENTRAL */}
-              <div className="mx-auto max-w-[520px] space-y-24">
-                {phrases.map((text, index) => {
-                  const isInitiallyVisible = index < 3
+              <p className="text-black/60 text-xs tracking-widest">
+                TOCA PARA COMENZAR
+              </p>
+            </motion.div>
+          )}
+
+          {/* ================= STEP 1 ================= */}
+          {step === 1 && (
+            <motion.div
+              key="timeline"
+              className="h-full flex flex-col justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {/* TITULO */}
+              <div className="text-center mb-10">
+                <h2 className="text-xl font-semibold">
+                  <span className="text-[#534CE7]">El viaje</span>
+                </h2>
+                <p className="text-sm text-black/50 mt-2">
+                  Momentos que definieron nuestro camino.
+                </p>
+              </div>
+
+              {/* LINEA */}
+              <motion.div
+                className="h-px bg-black/20 mb-10 origin-left"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1 }}
+              />
+
+              {/* MOMENTOS */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {moments.map((m, i) => {
+                  const Icon = m.icon
+                  const isActive = revealed.includes(i)
 
                   return (
-                    <motion.div
-                      key={index}
-                      initial={
-                        isInitiallyVisible
-                          ? { opacity: 1, y: 0 }
-                          : { opacity: 0, y: 20 }
-                      }
-                      whileInView={
-                        isInitiallyVisible
-                          ? undefined
-                          : { opacity: 1, y: 0 }
-                      }
-                      viewport={
-                        isInitiallyVisible
-                          ? undefined
-                          : { once: true, margin: "-120px" }
-                      }
-                      transition={{ duration: 0.6, ease: "easeOut" }}
+                    <button
+                      key={i}
+                      onClick={() => reveal(i)}
+                      className="flex flex-col items-center text-center gap-3"
                     >
-                      {/* desplazamiento SOLO dentro del marco */}
-                      <motion.p
-                        style={{ x: horizontalOffsets[index] }}
-                        className="
-                          text-white text-1.9xl md:text-2xl
-                          font-light leading-relaxed font-inter md:tracking-[0.15em]
-                          tracking-[0.02em]
-                        "
+                      {/* ICONO */}
+                      <motion.div
+                        className={`w-10 h-10 flex items-center justify-center transition ${
+                          isActive ? "text-[#534CE7]" : "text-black/70"
+                        }`}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.15 }}
                       >
-                        {text}
-                      </motion.p>
-                    </motion.div>
+                        <Icon size={45} />
+                      </motion.div>
+
+                      {/* TEXTO */}
+                      {isActive && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{
+                            delay: i === moments.length - 1 ? 0.25 : 0,
+                          }}
+                        >
+                          <p className="text-xs font-semibold">{m.label}</p>
+                          <p className="text-[11px] text-black/50 mt-1">
+                            {m.text}
+                          </p>
+                        </motion.div>
+                      )}
+                    </button>
                   )
                 })}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          )}
 
-          {/* FOOT */}
-          <div className="mt-32 text-center text-white/40 text-xs tracking-widest">
-            DÍA 04 · GRATITUD
-          </div>
-        </div>
+          {/* ================= STEP 2 ================= */}
+          {step === 2 && (
+            <motion.div
+              key="final"
+              className="h-full flex flex-col items-center justify-center text-center"
+              initial={{ opacity: 0, filter: "blur(8px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 1.4, ease: "easeOut" }}
+            >
+              <p className="text-xs tracking-widest text-black/50 mb-4">
+                PARA GUARDARLO SIEMPRE
+              </p>
+
+              <p className="text-2xl md:text-3xl font-serif leading-relaxed max-w-md">
+                No todo fue perfecto,
+                <br />
+                pero todo fue real.
+                <br />
+                <strong>Y eso lo hace nuestro.</strong>
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
-    </div>
+    </motion.div>
   )
 }
