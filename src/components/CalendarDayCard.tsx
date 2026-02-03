@@ -107,7 +107,7 @@ export default function CalendarDayCard({
 
           {/* HOY */}
           {isToday && (
-            <span className="mt-2 text-[11px] font-bold tracking-widest">
+            <span className="mt-2 text-xl md:text-2xl font-bold md:tracking-widest">
               HOY
             </span>
           )}

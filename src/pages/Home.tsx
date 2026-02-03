@@ -21,9 +21,9 @@ import type { CalendarDay } from "../types/calendar";
 import dayComponents from "../days/DayRegistry";
 import DayPlaceholder from "../days/DayPlaceholder";
 
-import DevTools from "../components/DevTools"
+import DevTools from "../components/DevTools";
 
-import Hero from "../components/Hero"
+import Hero from "../components/Hero";
 
 function normalizeDays(raw: any): number[] {
   if (!Array.isArray(raw)) return [];
@@ -217,20 +217,19 @@ export default function Home() {
         ))}
 
       {isDev && (
-  <DevTools
-    respectDates={respectDates}
-    setRespectDates={setRespectDates}
-    onReset={async () => {
-      const updated = await resetDevCalendar(token!)
-      setOpenedDays(updated)
-    }}
-    onOpenAll={async () => {
-      const updated = await openAllDaysDev(token!, days.length)
-      setOpenedDays(updated)
-    }}
-  />
-)}
-
+        <DevTools
+          respectDates={respectDates}
+          setRespectDates={setRespectDates}
+          onReset={async () => {
+            const updated = await resetDevCalendar(token!);
+            setOpenedDays(updated);
+          }}
+          onOpenAll={async () => {
+            const updated = await openAllDaysDev(token!, days.length);
+            setOpenedDays(updated);
+          }}
+        />
+      )}
     </motion.div>
   );
 }

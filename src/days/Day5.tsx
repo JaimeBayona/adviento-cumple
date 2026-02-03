@@ -75,7 +75,7 @@ export default function Day5({ onClose }: { onClose: () => void }) {
         {/* CERRAR */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 text-black/50 hover:text-[#534CE7] transition"
+          className="absolute top-6 right-6 z-50 text-black/50 hover:text-[#534CE7] transition"
         >
           <X />
         </button>
