@@ -1,6 +1,7 @@
+import { memo, useEffect, useMemo } from "react"
 import { motion } from "framer-motion"
+import { LockKeyhole, Gift, Check } from "lucide-react"
 import type { CalendarDay } from "../types/calendar"
-import { LockKeyhole } from "lucide-react"
 
 interface Props {
   day: CalendarDay
@@ -10,109 +11,133 @@ interface Props {
   onOpen: (day: CalendarDay) => void
 }
 
-export default function CalendarDayCard({
+const GIFT_CLOSED =
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/MEL/r3.png"
+
+const GIFT_OPEN =
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/MEL/r3-sm-o.png"
+
+const CalendarDayCard = memo(function CalendarDayCard({
   day,
   isLocked,
   isToday,
   isOpened,
   onOpen,
 }: Props) {
-  /**
-   * 💓 Palpita SOLO si:
-   * - no está bloqueado
-   * - no está abierto
-   * - no es futuro
-   */
-  const shouldHeartbeat = !isLocked && !isOpened
 
   /**
-   * 🎨 Colores por estado (LOCKED MANDA)
+   * 💓 Animación SOLO para HOY
    */
-  const bgClasses = () => {
-    // 🔒 FUTURO BLOQUEADO (prioridad máxima)
-    if (isLocked) {
-      return "bg-neutral-900 text-white/60"
-    }
+  const shouldHeartbeat = useMemo(
+    () => isToday && !isLocked && !isOpened,
+    [isToday, isLocked, isOpened]
+  )
 
-    // 🔥 HOY
-    if (isToday) {
-      return `
-        bg-[#C6B7D8]
-        text-black
-        shadow-[0_8px_30px_rgba(0,0,0,0.18)]
-        ring-2
-        ring-black/20
-      `
-    }
+  /**
+   * ⚡ Preload SOLO cuando es HOY
+   */
+  useEffect(() => {
+    if (!isToday) return
 
-    // 🟣 Pasado no abierto
-    if (!isOpened) {
-      return "bg-[#B7CBB2] text-black"
-    }
+    const img1 = new Image()
+    img1.src = GIFT_CLOSED
 
-    // ⚪ Abierto (pasado)
-    return "bg-[#4A4A4A] text-white/70"
-  }
+    const img2 = new Image()
+    img2.src = GIFT_OPEN
+  }, [isToday])
+
+  /**
+   * 🎨 Clases memorizadas
+   */
+  const bgClasses = useMemo(() => {
+    if (isLocked) return "bg-neutral-900 text-white/60"
+    if (isToday) return "bg-[#C9B6F2] text-white"
+    if (!isOpened) return "bg-[#A9CF9E] text-white"
+    return "bg-neutral-800 text-white/60"
+  }, [isLocked, isToday, isOpened])
 
   return (
     <motion.li
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{
         opacity: 1,
         y: 0,
-        scale: shouldHeartbeat ? [1, 1.045, 1] : 1,
+        scale: shouldHeartbeat ? [1, 1.04, 1] : 1,
       }}
       transition={{
-        opacity: { duration: 0.4 },
-        y: { duration: 0.4 },
+        opacity: { duration: 0.3 },
+        y: { duration: 0.3 },
         scale: shouldHeartbeat
-          ? {
-              duration: 1.6,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }
-          : { duration: 0.2 },
+          ? { duration: 1.8, repeat: Infinity, ease: "easeInOut" }
+          : { duration: 0.15 },
       }}
       onClick={() => onOpen(day)}
       className={`
+        relative
         aspect-square
+        rounded-3xl
+        overflow-hidden
         flex
-        flex-col
         items-center
         justify-center
-        rounded-2xl
         select-none
-        transition-all
-        ${bgClasses()}
+        cursor-pointer
+        transition-colors
+        ${bgClasses}
       `}
     >
-      {isLocked ? (
+
+      {/* 🔒 BLOQUEADO */}
+      {isLocked && (
         <div className="relative flex items-center justify-center">
-          {/* Número grande detrás */}
-          <span className="absolute text-6xl md:text-8xl font-black opacity-10">
+          <span className="absolute text-6xl sm:text-7xl md:text-8xl font-black opacity-10">
+            {day.day_number.toString().padStart(2, "0")}
+          </span>
+          <LockKeyhole size={30} />
+        </div>
+      )}
+
+      {/* 🎁 HOY */}
+      {isToday && !isLocked && (
+        <>
+          <span className="absolute bottom-3 right-3 text-3xl sm:text-6xl md:text-7xl font-black opacity-20">
             {day.day_number.toString().padStart(2, "0")}
           </span>
 
-          {/* Candado */}
-          <span className="relative">
-            <LockKeyhole size={30} />
-          </span>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center">
-          {/* Número */}
-          <span className="text-3xl md:text-5xl font-black">
+          <img
+            src={isOpened ? GIFT_OPEN : GIFT_CLOSED}
+            alt="Regalo"
+            loading="eager"
+            className="w-16 h-16 sm:w-30 sm:h-30 object-contain z-10"
+          />
+        </>
+      )}
+
+      {/* 🟢 DESBLOQUEADO · NO ABIERTO */}
+      {!isLocked && !isToday && !isOpened && (
+        <>
+          <span className="absolute bottom-3 right-3 text-3xl sm:text-6xl md:text-7xl font-black opacity-20">
             {day.day_number.toString().padStart(2, "0")}
           </span>
 
-          {/* HOY */}
-          {isToday && (
-            <span className="mt-2 text-xl md:text-2xl font-bold md:tracking-widest">
-              HOY
-            </span>
-          )}
-        </div>
+          <span className="absolute inset-3 rounded-2xl border border-dashed border-white/40" />
+
+          <Gift size={34} className="opacity-80" />
+        </>
+      )}
+
+      {/* ⚫ PASADO · ABIERTO */}
+      {!isLocked && !isToday && isOpened && (
+        <>
+          <span className="absolute bottom-3 right-3 text-3xl sm:text-6xl md:text-7xl font-black opacity-15">
+            {day.day_number.toString().padStart(2, "0")}
+          </span>
+
+          <Check size={28} className="opacity-60" />
+        </>
       )}
     </motion.li>
   )
-}
+})
+
+export default CalendarDayCard
