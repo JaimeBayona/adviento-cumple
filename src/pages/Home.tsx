@@ -25,6 +25,8 @@ import DevTools from "../components/DevTools";
 
 import Hero from "../components/Hero";
 
+import Footer from "../components/Footer";
+
 function normalizeDays(raw: any): number[] {
   if (!Array.isArray(raw)) return [];
   return raw.map(Number).filter((n) => !isNaN(n));
@@ -150,7 +152,7 @@ export default function Home() {
       transition={{ duration: 0.9, ease: "easeOut" }}
       className="min-h-screen bg-[#F5F1EC]"
     >
-      <div className="mx-auto max-w-[1300px] px-6 pb-24">
+      <div className="mx-auto max-w-[1300px] px-6">
         {/* HEADER */}
         <Hero />
 
@@ -230,6 +232,8 @@ export default function Home() {
           }}
         />
       )}
+      <Footer/>
     </motion.div>
   );
+  
 }
