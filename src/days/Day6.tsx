@@ -97,7 +97,7 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
 
   if (step > STEPS.length && answersComplete(answers) && voz) {
     return (
-      <section className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f1ec] px-6">
+      <section className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f1ec] px-6 py-10">
         <button
           onClick={onClose}
           className="absolute right-5 top-5 text-[#211119]/50 hover:text-[#211119]"
@@ -109,7 +109,7 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-xl text-center"
+          className="max-w-xl w-full text-center overflow-y-auto max-h-[90vh] px-4"
         >
           <span className="mb-4 block text-sm uppercase tracking-widest text-[#e8308c]">
             Día 6
@@ -131,7 +131,7 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
 
   if (step === 0) {
     return (
-      <section className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f1ec] px-6">
+      <section className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f1ec] px-6 py-10">
         <button
           onClick={onClose}
           className="absolute right-5 top-5 text-[#211119]/50 hover:text-[#211119]"
@@ -143,7 +143,7 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-5xl text-center"
+          className="w-full max-w-5xl text-center overflow-y-auto max-h-[90vh] px-4"
         >
           <span className="mb-4 inline-block rounded-full border border-[#e8308c]/40 px-4 py-1 text-xs uppercase tracking-widest text-[#e8308c]">
             Día 6
@@ -164,12 +164,8 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#f9d6e6] text-[#e8308c] transition group-hover:scale-110">
                 ○
               </div>
-              <h2 className="mb-2 text-xl font-medium">
-                La voz de la razón
-              </h2>
-              <p className="text-sm text-[#211119]/50">
-                Reflexión y lógica
-              </p>
+              <h2 className="mb-2 text-xl font-medium">La voz de la razón</h2>
+              <p className="text-sm text-[#211119]/50">Reflexión y lógica</p>
             </button>
 
             <button
@@ -182,12 +178,8 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#f9d6e6] text-[#e8308c] transition group-hover:scale-110">
                 ♥
               </div>
-              <h2 className="mb-2 text-xl font-medium">
-                La voz del corazón
-              </h2>
-              <p className="text-sm text-[#211119]/50">
-                Intuición y sentimiento
-              </p>
+              <h2 className="mb-2 text-xl font-medium">La voz del corazón</h2>
+              <p className="text-sm text-[#211119]/50">Intuición y sentimiento</p>
             </button>
           </div>
 
@@ -204,7 +196,7 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
   const current = STEPS[step - 1]
 
   return (
-    <section className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f1ec] px-6">
+    <section className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f1ec] px-6 py-10">
       <button
         onClick={onClose}
         className="absolute right-5 top-5 text-[#211119]/50 hover:text-[#211119]"
@@ -219,7 +211,7 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md text-center"
+          className="w-full max-w-md text-center overflow-y-auto max-h-[90vh] px-4"
         >
           <span className="mb-4 block text-sm uppercase tracking-widest text-[#e8308c]">
             Día 6
@@ -233,9 +225,7 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
             {current.options.map((opt) => (
               <button
                 key={opt.value}
-                onClick={() =>
-                  handleSelect(current.key, opt.value)
-                }
+                onClick={() => handleSelect(current.key, opt.value)}
                 className="rounded-xl border border-[#e8308c]/30 bg-white py-4 transition hover:bg-[#e8308c]/10"
               >
                 {opt.label}
