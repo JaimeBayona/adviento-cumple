@@ -61,7 +61,7 @@ export default function Day7({ onClose }: { onClose?: () => void }) {
 
               {/* Texto derecha */}
               <div className="flex flex-col items-center justify-center px-8 py-16 text-center">
-                <h1 className="select-none max-w-md font-[Manrope] text-2xl md:text-4xl font-black leading-tight text-[#1F1F1F]">
+                <h1 className="select-none max-w-md font-[Oswald] text-2xl md:text-4xl font-black leading-tight text-[#1F1F1F]">
                   Hoy quiero regalarte tres verdades que salen directo del
                   corazón…
                 </h1>

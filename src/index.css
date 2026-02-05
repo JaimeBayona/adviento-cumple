@@ -13,6 +13,11 @@
   src: url('/fonts/Inter.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'Oswald';
+  src: url('/fonts/Oswald.ttf') format('truetype');
+}
+
 
 @import "tailwindcss";
 
@@ -38,6 +43,7 @@
     --font-manrope: Manrope, serif;
     --font-inter: Inter, serif;
     --font-newsreader: Newsreader, serif;
+    --font-oswald: Oswald, serif;
 }
 
 body {
