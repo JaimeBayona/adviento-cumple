@@ -1,21 +1,21 @@
-import { memo, useEffect, useMemo } from "react"
-import { motion } from "framer-motion"
-import { LockKeyhole, Gift, Check } from "lucide-react"
-import type { CalendarDay } from "../types/calendar"
+import { memo, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
+import { LockKeyhole, Gift, Check } from "lucide-react";
+import type { CalendarDay } from "../types/calendar";
 
 interface Props {
-  day: CalendarDay
-  isLocked: boolean
-  isToday: boolean
-  isOpened: boolean
-  onOpen: (day: CalendarDay) => void
+  day: CalendarDay;
+  isLocked: boolean;
+  isToday: boolean;
+  isOpened: boolean;
+  onOpen: (day: CalendarDay) => void;
 }
 
 const GIFT_CLOSED =
-  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/MEL/r3.png"
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/MEL/r3.png";
 
 const GIFT_OPEN =
-  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/MEL/r3-sm-o.png"
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/MEL/r3-sm-o.png";
 
 const CalendarDayCard = memo(function CalendarDayCard({
   day,
@@ -24,37 +24,36 @@ const CalendarDayCard = memo(function CalendarDayCard({
   isOpened,
   onOpen,
 }: Props) {
-
   /**
    * 💓 Animación SOLO para HOY
    */
   const shouldHeartbeat = useMemo(
     () => isToday && !isLocked && !isOpened,
-    [isToday, isLocked, isOpened]
-  )
+    [isToday, isLocked, isOpened],
+  );
 
   /**
    * ⚡ Preload SOLO cuando es HOY
    */
   useEffect(() => {
-    if (!isToday) return
+    if (!isToday) return;
 
-    const img1 = new Image()
-    img1.src = GIFT_CLOSED
+    const img1 = new Image();
+    img1.src = GIFT_CLOSED;
 
-    const img2 = new Image()
-    img2.src = GIFT_OPEN
-  }, [isToday])
+    const img2 = new Image();
+    img2.src = GIFT_OPEN;
+  }, [isToday]);
 
   /**
    * 🎨 Clases memorizadas
    */
   const bgClasses = useMemo(() => {
-    if (isLocked) return "bg-neutral-900 text-white/60"
-    if (isToday) return "bg-[#C9B6F2] text-white"
-    if (!isOpened) return "bg-[#A9CF9E] text-white"
-    return "bg-neutral-800 text-white/60"
-  }, [isLocked, isToday, isOpened])
+    if (isLocked) return "bg-neutral-900 text-white/60";
+    if (isToday) return "bg-[#C9B6F2] text-white";
+    if (!isOpened) return "bg-[#A9CF9E] text-white";
+    return "bg-neutral-800 text-white/60";
+  }, [isLocked, isToday, isOpened]);
 
   return (
     <motion.li
@@ -86,7 +85,6 @@ const CalendarDayCard = memo(function CalendarDayCard({
         ${bgClasses}
       `}
     >
-
       {/* 🔒 BLOQUEADO */}
       {isLocked && (
         <div className="relative flex items-center justify-center">
@@ -137,7 +135,7 @@ const CalendarDayCard = memo(function CalendarDayCard({
         </>
       )}
     </motion.li>
-  )
-})
+  );
+});
 
-export default CalendarDayCard
+export default CalendarDayCard;

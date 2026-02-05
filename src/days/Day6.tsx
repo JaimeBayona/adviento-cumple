@@ -1,36 +1,36 @@
-import { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { X } from "lucide-react"
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 
 /* ====== TIPOS ====== */
 
-type Voz = "razon" | "corazon"
+type Voz = "razon" | "corazon";
 
-type ChoiceKey = "estado" | "accion" | "intencion" | "resultado"
+type ChoiceKey = "estado" | "accion" | "intencion" | "resultado";
 
-type Estado = "calma" | "dudas" | "ilusion" | "nostalgia"
-type Accion = "valentia" | "cuidado" | "impulso" | "pasos"
-type Intencion = "amor" | "curiosidad" | "esperanza" | "verdad"
-type Resultado = "paz" | "respuestas" | "comienzo" | "crecer"
+type Estado = "calma" | "dudas" | "ilusion" | "nostalgia";
+type Accion = "valentia" | "cuidado" | "impulso" | "pasos";
+type Intencion = "amor" | "curiosidad" | "esperanza" | "verdad";
+type Resultado = "paz" | "respuestas" | "comienzo" | "crecer";
 
 type Answers = {
-  estado: Estado
-  accion: Accion
-  intencion: Intencion
-  resultado: Resultado
-}
+  estado: Estado;
+  accion: Accion;
+  intencion: Intencion;
+  resultado: Resultado;
+};
 
 type ChoiceOption = {
-  label: string
-  value: string
-}
+  label: string;
+  value: string;
+};
 
 /* ====== PASOS ====== */
 
 const STEPS: {
-  key: ChoiceKey
-  question: string
-  options: ChoiceOption[]
+  key: ChoiceKey;
+  question: string;
+  options: ChoiceOption[];
 }[] = [
   {
     key: "estado",
@@ -72,25 +72,25 @@ const STEPS: {
       { label: "Crecer", value: "crecer" },
     ],
   },
-]
+];
 
 /* ====== COMPONENTE ====== */
 
 export default function Day6({ onClose }: { onClose?: () => void }) {
-  const [step, setStep] = useState(0)
-  const [voz, setVoz] = useState<Voz | null>(null)
-  const [answers, setAnswers] = useState<Partial<Answers>>({})
+  const [step, setStep] = useState(0);
+  const [voz, setVoz] = useState<Voz | null>(null);
+  const [answers, setAnswers] = useState<Partial<Answers>>({});
 
   useEffect(() => {
-    document.body.style.overflow = "hidden"
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = ""
-    }
-  }, [])
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   function handleSelect(key: ChoiceKey, value: string) {
-    setAnswers((prev) => ({ ...prev, [key]: value }))
-    setStep((prev) => prev + 1)
+    setAnswers((prev) => ({ ...prev, [key]: value }));
+    setStep((prev) => prev + 1);
   }
 
   /* ====== RESULTADO FINAL ====== */
@@ -124,7 +124,7 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
           </p>
         </motion.div>
       </section>
-    )
+    );
   }
 
   /* ====== PRIMER PASO: VOZ ====== */
@@ -149,19 +149,29 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
             Día 6
           </span>
 
-          <h1 className="mb-14 text-4xl font-serif text-[#211119]">
+          <h1 className="mb-8 md:mb-14 text-2xl md:text-4xl font-[Manrope] text-[#211119]">
             ¿Qué voz escuchas hoy?
           </h1>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <button
               onClick={() => {
-                setVoz("razon")
-                setStep(1)
+                setVoz("razon");
+                setStep(1);
               }}
               className="group rounded-3xl bg-white px-8 py-16 transition hover:bg-[#e8308c]/5"
             >
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#f9d6e6] text-[#e8308c] transition group-hover:scale-110">
+              <div
+                className="
+                mx-auto mb-6
+                flex
+                h-16 w-16
+                items-center
+                justify-center
+                rounded-full
+                bg-[#f9d6e6] text-[#e8308c]
+                transition group-hover:scale-110"
+              >
                 ○
               </div>
               <h2 className="mb-2 text-xl font-medium">La voz de la razón</h2>
@@ -170,8 +180,8 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
 
             <button
               onClick={() => {
-                setVoz("corazon")
-                setStep(1)
+                setVoz("corazon");
+                setStep(1);
               }}
               className="group rounded-3xl bg-white px-8 py-16 transition hover:bg-[#e8308c]/5"
             >
@@ -179,7 +189,9 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
                 ♥
               </div>
               <h2 className="mb-2 text-xl font-medium">La voz del corazón</h2>
-              <p className="text-sm text-[#211119]/50">Intuición y sentimiento</p>
+              <p className="text-sm text-[#211119]/50">
+                Intuición y sentimiento
+              </p>
             </button>
           </div>
 
@@ -188,12 +200,12 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
           </p>
         </motion.div>
       </section>
-    )
+    );
   }
 
   /* ====== PASOS NORMALES ====== */
 
-  const current = STEPS[step - 1]
+  const current = STEPS[step - 1];
 
   return (
     <section className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f1ec] px-6 py-10">
@@ -235,7 +247,7 @@ export default function Day6({ onClose }: { onClose?: () => void }) {
         </motion.div>
       </AnimatePresence>
     </section>
-  )
+  );
 }
 
 /* ====== TEXTO FINAL ====== */
@@ -244,37 +256,33 @@ function buildTextoFinal(a: Answers, voz: Voz) {
   const inicio =
     voz === "razon"
       ? "Desde la voz de la razón, donde la reflexión y la lógica toman forma,"
-      : "Cuando habla la voz del corazón, guiada por la intuición y el sentimiento,"
+      : "Cuando habla la voz del corazón, guiada por la intuición y el sentimiento,";
 
   const plantillas = [
     () =>
       `${inicio} avanzar desde la ${estadoTexto(
-        a.estado
-      )} y moverte ${accionTexto(
-        a.accion
-      )} permite que ${intencionTexto(
-        a.intencion
+        a.estado,
+      )} y moverte ${accionTexto(a.accion)} permite que ${intencionTexto(
+        a.intencion,
       )} marque el ritmo y te acerque, sin forzar, a ${resultadoTexto(
-        a.resultado
+        a.resultado,
       )}.`,
 
     () =>
       `${inicio} cada paso dado ${accionTexto(
-        a.accion
+        a.accion,
       )}, incluso cuando nace de la ${estadoTexto(
-        a.estado
+        a.estado,
       )}, va trazando un camino donde ${intencionTexto(
-        a.intencion
-      )} encuentra sentido y abre espacio para ${resultadoTexto(
-        a.resultado
-      )}.`,
-  ]
+        a.intencion,
+      )} encuentra sentido y abre espacio para ${resultadoTexto(a.resultado)}.`,
+  ];
 
-  return plantillas[Math.floor(Math.random() * plantillas.length)]()
+  return plantillas[Math.floor(Math.random() * plantillas.length)]();
 }
 
 function answersComplete(a: Partial<Answers>): a is Answers {
-  return !!a.estado && !!a.accion && !!a.intencion && !!a.resultado
+  return !!a.estado && !!a.accion && !!a.intencion && !!a.resultado;
 }
 
 /* ====== LÓGICA LINGÜÍSTICA ====== */
@@ -285,7 +293,7 @@ function estadoTexto(v: Estado) {
     dudas: "incertidumbre",
     ilusion: "ilusión",
     nostalgia: "nostalgia",
-  }[v]
+  }[v];
 }
 
 function accionTexto(v: Accion) {
@@ -294,7 +302,7 @@ function accionTexto(v: Accion) {
     cuidado: "con cuidado",
     impulso: "siguiendo el impulso",
     pasos: "paso a paso",
-  }[v]
+  }[v];
 }
 
 function intencionTexto(v: Intencion) {
@@ -303,7 +311,7 @@ function intencionTexto(v: Intencion) {
     curiosidad: "la curiosidad",
     esperanza: "la esperanza",
     verdad: "la verdad",
-  }[v]
+  }[v];
 }
 
 function resultadoTexto(v: Resultado) {
@@ -312,5 +320,5 @@ function resultadoTexto(v: Resultado) {
     respuestas: "respuestas",
     comienzo: "un nuevo comienzo",
     crecer: "el crecimiento",
-  }[v]
+  }[v];
 }
