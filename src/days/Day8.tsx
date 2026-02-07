@@ -227,7 +227,7 @@ export default function Day8({ onClose, isPublic = false }: Day8Props) {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                Porque incluso los momentos más vergonzosos también forman parte
+                Porque incluso los momentos más inesperados también forman parte
                 de lo que te hace única 💖
               </motion.p>
             )}
