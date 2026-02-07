@@ -134,7 +134,7 @@ const CalendarDayCard = memo(function CalendarDayCard({
           <span className="absolute bottom-3 right-3 text-4xl sm:text-6xl md:text-7xl font-black opacity-15">
             {day.day_number.toString().padStart(2, "0")}
           </span>
-          <span className="absolute top-4 left-4 flex flex-col text-[11px] md:text-2xl font-black opacity-15 uppercase">
+          <span className="absolute top-4 left-4 flex flex-col text-[11px] md:text-sm font-black opacity-15 uppercase">
             {mes.split("").map((char, i) => (
               <span key={i}>{char}</span>
             ))}
