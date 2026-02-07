@@ -1,23 +1,22 @@
 @font-face {
-  font-family: 'Manrope';
-  src: url('/fonts/Manrope.ttf') format('truetype');
+  font-family: "Manrope";
+  src: url("/fonts/Manrope.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Newsreader';
-  src: url('/fonts/Newsreader.ttf') format('truetype');
+  font-family: "Newsreader";
+  src: url("/fonts/Newsreader.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter.ttf') format('truetype');
+  font-family: "Inter";
+  src: url("/fonts/Inter.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Oswald';
-  src: url('/fonts/Oswald.ttf') format('truetype');
+  font-family: "Oswald";
+  src: url("/fonts/Oswald.ttf") format("truetype");
 }
-
 
 @import "tailwindcss";
 
@@ -25,35 +24,62 @@
 :root {
   --color-primary: #d91e27;
   --color-beige: #f5f2ed;
-  --color-lilac: #AA98A9;
+  --color-lilac: #aa98a9;
   --color-muted-green: #aebfa1;
   --color-charcoal: #1a1a1a;
-  --color-beige-x: #D6AF7D;
+  --color-beige-x: #d6af7d;
 
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 }
 
 @theme {
-    --color-primary: #d91e27;
-    --color-beige: #f5f2ed;
-    --color-lilac: #e2daeb;
-    --color-muted-green: #aebfa1;
-    --color-charcoal: #1a1a1a;
-    --color-beige-x: #D6AF7D;
-    --font-manrope: Manrope, serif;
-    --font-inter: Inter, serif;
-    --font-newsreader: Newsreader, serif;
-    --font-oswald: Oswald, serif;
+  --color-primary: #d91e27;
+  --color-beige: #f5f2ed;
+  --color-lilac: #e2daeb;
+  --color-muted-green: #aebfa1;
+  --color-charcoal: #1a1a1a;
+  --color-beige-x: #d6af7d;
+  --font-manrope: Manrope, serif;
+  --font-inter: Inter, serif;
+  --font-newsreader: Newsreader, serif;
+  --font-oswald: Oswald, serif;
 }
 
 body {
   overscroll-behavior: contain;
 }
 
+/* ESTILOS PERSONALIZADOS */
+
+/* Scrollbar — Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.3) transparent;
+}
+
+
 @media (min-width: 768px) {
   .scrollbar-custom {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.25) transparent;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
   }
 
   .scrollbar-custom::-webkit-scrollbar {
@@ -65,15 +91,13 @@ body {
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb {
-    background-color: rgba(255,255,255,0.25);
+    background-color: rgba(255, 255, 255, 0.25);
     border-radius: 999px;
     border: 2px solid transparent;
     background-clip: content-box;
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255,255,255,0.4);
+    background-color: rgba(255, 255, 255, 0.4);
   }
 }
-
-
