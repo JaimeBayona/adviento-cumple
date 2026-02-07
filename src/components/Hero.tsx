@@ -38,7 +38,7 @@ export default function Hero() {
 
       {/* Contenido */}
       <div className="relative z-10 px-6 max-w-5xl">
-        <p className="text-primary text-[9px] sm:text-[10px] font-black uppercase tracking-[0.55em] mb-6 sm:mb-8">
+        <p className="text-primary text-[10px] sm:text-[12px] font-black uppercase tracking-[0.55em] mb-6 sm:mb-8">
           MARILYN · MM
         </p>
 
@@ -48,7 +48,7 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="
         font-black uppercase leading-[0.95]
-        text-[clamp(2rem,7vw,4.5rem)]
+        text-[clamp(2.2rem,7vw,4.5rem)]
         max-w-[95%] sm:max-w-3xl
       "
         >
