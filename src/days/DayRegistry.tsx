@@ -9,6 +9,7 @@ import Day8 from "./Day8"
 import Day9 from "./Day9"
 import Day10 from "./Day10"
 import Day11 from "./Day11"
+import Day12 from "./Day12"
 
 const dayComponents: Record<
   number,
@@ -25,6 +26,7 @@ const dayComponents: Record<
   9: Day9,
   10: Day10,
   11: Day11,
+  12: Day12,
 }
 
 export default dayComponents
