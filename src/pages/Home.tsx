@@ -164,7 +164,7 @@ export default function Home() {
         className="min-h-screen flex items-center justify-center bg-[#F5F1EC]"
       >
         <motion.img
-          src="/marilyn-logo.svg"
+          src="/marilyn.svg"
           alt="Cargando"
           className="w-45 h-45"
           initial={{ opacity: 0, scale: 0.9 }}
