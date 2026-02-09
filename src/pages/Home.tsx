@@ -47,6 +47,7 @@ export default function Home() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [isInvalidToken, setIsInvalidToken] = useState(false);
   const [loading, setLoading] = useState(true);
+  const MIN_LOADING_TIME = 700;
 
   const [respectDates, setRespectDates] = useState(false);
 
@@ -77,9 +78,23 @@ export default function Home() {
      2️⃣ CARGA DE DÍAS
   ============================ */
   useEffect(() => {
-    getCalendarDays()
-      .then(setDays)
-      .finally(() => setLoading(false));
+    async function loadDays() {
+      const start = Date.now();
+
+      const data = await getCalendarDays();
+      setDays(data);
+
+      const elapsed = Date.now() - start;
+      const remaining = MIN_LOADING_TIME - elapsed;
+
+      if (remaining > 0) {
+        await new Promise((res) => setTimeout(res, remaining));
+      }
+
+      setLoading(false);
+    }
+
+    loadDays();
   }, []);
 
   /* ============================
@@ -132,11 +147,35 @@ export default function Home() {
     );
   }
 
-  if (loading) {
+  /* if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F1EC]">
         <p className="text-sm text-black/60">Cargando…</p>
       </div>
+    );
+  } */
+
+  if (loading) {
+    return (
+      <motion.div
+        initial={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.4 }}
+        className="min-h-screen flex items-center justify-center bg-[#F5F1EC]"
+      >
+        <motion.img
+          src="/marilyn-logo.svg"
+          alt="Cargando"
+          className="w-45 h-45"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: [0.95, 1, 0.95] }}
+          transition={{
+            duration: 1.6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </motion.div>
     );
   }
 
@@ -232,8 +271,7 @@ export default function Home() {
           }}
         />
       )}
-      <Footer/>
+      <Footer />
     </motion.div>
   );
-  
 }
