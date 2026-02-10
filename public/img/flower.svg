@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Radial gradient para pétalos -->
+    <radialGradient id="petalGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#2beead" stop-opacity="0.2"/>
+    </radialGradient>
+  </defs>
+
+  <g transform="translate(200,200)">
+    <!-- Pétalos (5 rotados) -->
+    <path d="M0,-120 C30,-90 30,-30 0,0 C-30,-30 -30,-90 0,-120"
+          fill="url(#petalGradient)"/>
+    <path d="M0,-120 C30,-90 30,-30 0,0 C-30,-30 -30,-90 0,-120"
+          fill="url(#petalGradient)" transform="rotate(72)"/>
+    <path d="M0,-120 C30,-90 30,-30 0,0 C-30,-30 -30,-90 0,-120"
+          fill="url(#petalGradient)" transform="rotate(144)"/>
+    <path d="M0,-120 C30,-90 30,-30 0,0 C-30,-30 -30,-90 0,-120"
+          fill="url(#petalGradient)" transform="rotate(216)"/>
+    <path d="M0,-120 C30,-90 30,-30 0,0 C-30,-30 -30,-90 0,-120"
+          fill="url(#petalGradient)" transform="rotate(288)"/>
+
+    <!-- Centro de la flor -->
+    <circle cx="0" cy="0" r="20" fill="#ffffff" />
+    <circle cx="0" cy="0" r="10" fill="#2beead" />
+  </g>
+</svg>
