@@ -243,9 +243,12 @@ export default function Day8({ onClose, isPublic = false }: Day8Props) {
 ================================ */
 
 const PUBLIC_IMAGES = [
-  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-  "https://images.unsplash.com/photo-1499084732479-de2c02d45fc4",
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/MEL/Hks_skl.jpg",
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/Day8/20200209_150758.jpg",
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/Day8/IMG_20200918_163502.jpg",
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/Day8/IMG_20201103_184026_944.jpg",
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/Day8/IMG_20201103_191208_546.jpg",
+  "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/Day8/IMG_20201106_160204_126.jpg",
 ];
 
 const PRIVATE_IMAGES = [
