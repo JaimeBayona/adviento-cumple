@@ -1,109 +1,192 @@
-import { useEffect, useState } from "react"
+// src/days/Day13.tsx
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X } from "lucide-react"
+import { Heart, ArrowRight, ArrowLeft, Sparkles } from "lucide-react"
 
-type Version = {
-  title: string
-  text: string
+type Day13Props = {
+  onClose?: () => void
 }
 
-const VERSIONS: Version[] = [
+const PAGES = [
   {
-    title: "La que cuida",
-    text: "La que aprendió a ser hogar, incluso cuando estaba cansada. La que ama sin manual.",
+    chapter: "CAPÍTULO UNO",
+    titleMain: "La Amiga",
+    titleAccent: "Incondicional",
+    body: `Hay personas que llegan a nuestra vida para quedarse.
+No solo en las risas, sino también cuando el silencio pesa.
+
+Tu lealtad ha sido ancla, refugio y hogar.
+Gracias por estar incluso cuando no supe pedir ayuda.`,
+    image:
+      "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/photos/531563.jpeg",
   },
   {
-    title: "La amiga",
-    text: "La que escucha, la que se queda, la que hace reír cuando nadie más sabe cómo.",
+    chapter: "CAPÍTULO DOS",
+    titleMain: "La Mujer",
+    titleAccent: "Soñadora",
+    body: `Tus ojos no solo ven el mundo como es,
+sino como podría llegar a ser.
+
+En cada sueño tuyo hay una semilla de luz
+que inspira a todos a mirar más alto.`,
+    image:
+      "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/photos/654987.jpeg",
   },
   {
-    title: "La fuerte",
-    text: "La que siguió aun con miedo. La que no siempre pudo, pero nunca se rindió.",
-  },
-  {
-    title: "La soñadora",
-    text: "La que imagina futuros mejores. La que cree, incluso cuando el mundo pesa.",
-  },
-  {
-    title: "La que casi nadie ve",
-    text: "La que siente profundo. La que guarda silencios. La que merece más de lo que pide.",
+    chapter: "CAPÍTULO FINAL",
+    titleMain: "La Fuerza",
+    titleAccent: "de Mamá",
+    body: `Tu fortaleza no hace ruido.
+Es la constancia silenciosa de quien ama sin medida.
+
+Eres prueba viva de que la ternura
+también puede ser invencible.`,
+    image:
+      "https://qhyhynxpcuovxmnfhndv.supabase.co/storage/v1/object/public/calendar/photos/3215.jpeg",
   },
 ]
 
-export default function Day13({ onClose }: { onClose: () => void }) {
+export default function Day13({ onClose }: Day13Props) {
   const [index, setIndex] = useState(0)
+  const [isClosing, setIsClosing] = useState(false)
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden"
-    return () => {
-      document.body.style.overflow = ""
-    }
-  }, [])
+  const page = PAGES[index]
 
   function next() {
-    if (index < VERSIONS.length - 1) {
-      setIndex((i) => i + 1)
-    }
+    if (index < PAGES.length - 1) setIndex((i) => i + 1)
   }
 
-  const isEnd = index === VERSIONS.length - 1
+  function prev() {
+    if (index > 0) setIndex((i) => i - 1)
+  }
+
+  function handleClose() {
+    setIsClosing(true)
+    setTimeout(() => {
+      onClose?.()
+    }, 500)
+  }
 
   return (
-    <section className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-[#f5f1ec] to-[#e9d8c3] px-6">
-      {/* Cerrar */}
-      <button
-        onClick={onClose}
-        className="absolute right-4 top-4 rounded-full p-2 text-[#211119]/60 hover:bg-black/5"
-      >
-        <X />
-      </button>
-
-      <div className="relative w-full max-w-xl">
-        <AnimatePresence mode="wait">
+    <AnimatePresence>
+      {!isClosing && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-white px-4 py-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -40, scale: 0.95 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="rounded-3xl bg-white p-10 text-center shadow-xl"
+            className="relative w-full max-w-5xl"
+            initial={{ scale: 0.96, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.96, opacity: 0 }}
+            transition={{ duration: 0.45, ease: "easeInOut" }}
           >
-            <h2 className="mb-6 text-3xl font-serif text-[#211119]">
-              {VERSIONS[index].title}
-            </h2>
+            {/* INDICADOR */}
+            <div className="mb-6 flex justify-center gap-2">
+              {PAGES.map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1.5 w-8 rounded-full transition ${
+                    i === index ? "bg-pink-500" : "bg-pink-200"
+                  }`}
+                />
+              ))}
+            </div>
 
-            <p className="mb-10 text-lg leading-relaxed text-[#211119]/80">
-              {VERSIONS[index].text}
-            </p>
-
-            {!isEnd ? (
-              <button
-                onClick={next}
-                className="rounded-full bg-[#e8308c] px-8 py-3 text-white transition hover:scale-105"
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.4 }}
+                className="
+                  grid grid-cols-1
+                  overflow-hidden rounded-3xl bg-white shadow-xl
+                  md:grid-cols-2
+                  md:max-h-[520px]
+                "
               >
-                Ver otra versión
-              </button>
-            ) : (
-              <p className="mt-6 text-lg font-medium text-[#e8308c]">
-                Todas viven en ti.  
-                Y todas importan.
-              </p>
-            )}
-          </motion.div>
-        </AnimatePresence>
+                {/* IMAGEN */}
+                <div className="relative h-64 md:aspect-[4/5] md:h-auto">
+                  <motion.img
+                    key={page.image}
+                    src={page.image}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    initial={{ scale: 1.08, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    style={{
+                      objectPosition: index === 0 ? "center 20%" : "center",
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                </div>
 
-        {/* Indicador */}
-        <div className="mt-6 flex justify-center gap-2">
-          {VERSIONS.map((_, i) => (
-            <span
-              key={i}
-              className={`h-2 w-2 rounded-full ${
-                i === index ? "bg-[#e8308c]" : "bg-[#211119]/20"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
+                {/* TEXTO */}
+                <div className="flex flex-col px-8 py-10 text-center md:text-left md:overflow-y-auto md:max-h-[520px]">
+                  <span className="mb-2 text-xs tracking-widest text-pink-500">
+                    {page.chapter}
+                  </span>
+
+                  <h2 className="text-3xl font-semibold text-gray-900 md:text-4xl">
+                    {page.titleMain}{" "}
+                    <span className="text-pink-500 italic">
+                      {page.titleAccent}
+                    </span>
+                  </h2>
+
+                  <p className="mt-6 whitespace-pre-line text-gray-600">
+                    {page.body}
+                  </p>
+
+                  {/* CTA */}
+                  <div className="mt-8 flex items-center justify-center gap-4 md:justify-start">
+                    {index > 0 && (
+                      <button
+                        onClick={prev}
+                        className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800"
+                      >
+                        <ArrowLeft size={16} /> Anterior
+                      </button>
+                    )}
+
+                    {index < PAGES.length - 1 ? (
+                      <button
+                        onClick={next}
+                        className="flex items-center gap-2 rounded-full bg-pink-500 px-6 py-3 text-sm font-medium text-white shadow hover:bg-pink-600"
+                      >
+                        Siguiente versión <ArrowRight size={16} />
+                      </button>
+                    ) : (
+                      <motion.button
+                        onClick={handleClose}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        animate={{ scale: [1, 1.04, 1] }}
+                        transition={{ repeat: Infinity, duration: 1.8 }}
+                        className="flex items-center gap-2 rounded-full bg-pink-600 px-7 py-3 text-sm font-medium text-white shadow-lg"
+                      >
+                        <Heart size={16} /> Gracias por existir
+                      </motion.button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* FOOTER */}
+            <div className="mt-6 text-center text-xs text-gray-400">
+              Hecho con amor para alguien excepcional{" "}
+              <Sparkles className="inline h-3 w-3 text-pink-400" />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
