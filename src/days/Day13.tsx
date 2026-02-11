@@ -71,21 +71,21 @@ export default function Day13({ onClose }: Day13Props) {
     <AnimatePresence>
       {!isClosing && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white px-4 py-8"
+          className="fixed inset-0 z-50 bg-white md:flex md:items-center md:justify-center md:px-4 md:py-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
         >
           <motion.div
-            className="relative w-full max-w-5xl"
+            className="relative w-full h-full md:h-auto md:max-w-5xl"
             initial={{ scale: 0.96, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.96, opacity: 0 }}
             transition={{ duration: 0.45, ease: "easeInOut" }}
           >
             {/* INDICADOR */}
-            <div className="mb-6 flex justify-center gap-2">
+            <div className="absolute top-6 md:top-2 left-0 right-0 z-10 flex justify-center gap-2 md:relative md:mb-6">
               {PAGES.map((_, i) => (
                 <div
                   key={i}
@@ -104,14 +104,14 @@ export default function Day13({ onClose }: Day13Props) {
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.4 }}
                 className="
-                  grid grid-cols-1
-                  overflow-hidden rounded-3xl bg-white shadow-xl
-                  md:grid-cols-2
+                  flex flex-col h-full bg-white
+                  md:grid md:grid-cols-2
+                  md:overflow-hidden md:rounded-3xl md:shadow-xl
                   md:max-h-[520px]
                 "
               >
                 {/* IMAGEN */}
-                <div className="relative h-64 md:aspect-[4/5] md:h-auto">
+                <div className="relative h-[40vh] md:h-64 md:aspect-[4/5] md:h-auto">
                   <motion.img
                     key={page.image}
                     src={page.image}
@@ -128,24 +128,28 @@ export default function Day13({ onClose }: Day13Props) {
                 </div>
 
                 {/* TEXTO */}
-                <div className="flex flex-col px-8 py-10 text-center md:text-left md:overflow-y-auto md:max-h-[520px]">
-                  <span className="mb-2 text-xs tracking-widest text-pink-500">
-                    {page.chapter}
-                  </span>
-
-                  <h2 className="text-3xl font-semibold text-gray-900 md:text-4xl">
-                    {page.titleMain}{" "}
-                    <span className="text-pink-500 italic">
-                      {page.titleAccent}
+                <div className="flex flex-col flex-1 px-6 py-8 text-center md:px-8 md:py-10 md:text-left md:overflow-y-auto md:max-h-[520px]">
+                  
+                  {/* SCROLL SOLO MOBILE */}
+                  <div className="overflow-y-auto md:overflow-visible">
+                    <span className="mb-2 block text-xs tracking-widest text-pink-500">
+                      {page.chapter}
                     </span>
-                  </h2>
 
-                  <p className="mt-6 whitespace-pre-line text-gray-600">
-                    {page.body}
-                  </p>
+                    <h2 className="text-3xl font-semibold text-gray-900 md:text-4xl">
+                      {page.titleMain}{" "}
+                      <span className="text-pink-500 italic">
+                        {page.titleAccent}
+                      </span>
+                    </h2>
+
+                    <p className="mt-6 whitespace-pre-line text-gray-600 text-left">
+                      {page.body}
+                    </p>
+                  </div>
 
                   {/* CTA */}
-                  <div className="mt-8 flex items-center justify-center gap-4 md:justify-start">
+                  <div className="mt-auto pt-6 flex items-center justify-center gap-4 md:mt-8 md:pt-0 md:justify-start">
                     {index > 0 && (
                       <button
                         onClick={prev}
@@ -179,8 +183,8 @@ export default function Day13({ onClose }: Day13Props) {
               </motion.div>
             </AnimatePresence>
 
-            {/* FOOTER */}
-            <div className="mt-6 text-center text-xs text-gray-400">
+            {/* FOOTER SOLO DESKTOP */}
+            <div className="hidden md:block mt-6 text-center text-xs text-gray-400">
               Hecho con amor para alguien excepcional{" "}
               <Sparkles className="inline h-3 w-3 text-pink-400" />
             </div>
