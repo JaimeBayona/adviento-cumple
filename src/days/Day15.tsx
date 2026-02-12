@@ -98,20 +98,20 @@ export default function Day15({ onClose }: Day15Props) {
                     key={i}
                     className="absolute w-1 h-1 rounded-full bg-white/60"
                     style={{
-                      transform: `rotate(${i * 30}deg) translateY(-48px)`,
+                      transform: `rotate(${i * 30}deg) translateY(-38px)`,
                     }}
-                    /* animate={{ opacity: [0.3, 1, 0.3] }}
+                    animate={{ opacity: [0.3, 1, 0.3] }}
                     transition={{
                       duration: 2,
                       repeat: Infinity,
                       delay: i * 0.1,
-                    }} */
+                    }}
                   />
                 ))}
 
                 <Headphones
                   size={30}
-                  strokeWidth={1.5}
+                  strokeWidth={2}
                   className="text-white/80"
                 />
               </div>
