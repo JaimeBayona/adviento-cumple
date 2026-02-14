@@ -13,6 +13,8 @@ import Day12 from "./Day12"
 import Day13 from "./Day13"
 import Day14 from "./Day14"
 import Day15 from "./Day15"
+import Day16 from "./Day16"
+import Day20 from "./Day20/Day20"
 
 const dayComponents: Record<
   number,
@@ -33,6 +35,8 @@ const dayComponents: Record<
   13: Day13,
   14: Day14,
   15: Day15,
+  16: Day16,
+  20: Day20,
 }
 
 export default dayComponents

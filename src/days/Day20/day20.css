@@ -1,0 +1,208 @@
+.day16-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: radial-gradient(circle at center, #111 0%, #000 80%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* HUD optimizado */
+.hud {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.03;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
+.hud circle,
+.hud rect {
+  stroke: white;
+  fill: none;
+  stroke-width: 1;
+}
+
+.card {
+  text-align: center;
+  width: 80%;
+  max-width: 180px; /* Contenedor más pequeño */
+  position: relative;
+  z-index: 2;
+}
+
+.frame {
+  position: relative;
+  padding: 1rem 1.5rem; /* Más compacto */
+  contain: layout paint;
+  will-change: transform;
+  border-radius: 4px;
+  background: rgba(255 255 255 / 0.02);
+}
+
+/* Vibración optimizada */
+.holding {
+  animation: shake 0.3s infinite;
+  will-change: transform;
+}
+
+@keyframes shake {
+  0%,100% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(-1px,1px,0); }
+}
+
+/* PROGRESS ORIGINAL (optimizado) */
+.frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 4px;
+
+  background: conic-gradient(
+    white var(--progress),
+    rgba(255,255,255,0.08) var(--progress)
+  );
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none;
+  will-change: background;
+}
+
+/* Botón */
+.hold-text {
+  margin-top: 1.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  opacity: 0.7;
+  display: inline-block;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.hold-text.active {
+  background: rgba(255,255,255,0.05);
+}
+
+/* Glitch */
+.glitch {
+  position: relative;
+  font-size: 1rem; /* más pequeño para mobile-friendly */
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  animation: flicker 4s infinite;
+  font-family: 'Oswald', sans-serif;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  opacity: 0.7;
+}
+
+.glitch::before {
+  color: #ff00c8;
+  z-index: -1;
+  animation: glitchTop 3s infinite steps(2, end);
+  clip-path: inset(0 0 50% 0);
+}
+
+.glitch::after {
+  color: #00fff9;
+  z-index: -2;
+  animation: glitchBottom 3s infinite steps(2, end);
+  clip-path: inset(50% 0 0 0);
+}
+
+@keyframes glitchTop {
+  0%,100% { transform: translate3d(0,0,0); }
+  10% { transform: translate3d(-3px,-2px,0); }
+  20% { transform: translate3d(2px,1px,0); }
+}
+
+@keyframes glitchBottom {
+  0%,100% { transform: translate3d(0,0,0); }
+  10% { transform: translate3d(3px,2px,0); }
+  20% { transform: translate3d(-2px,-1px,0); }
+}
+
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.4; }
+}
+
+.line {
+  margin: 1.5rem auto;
+  width: 100%;
+  height: 5px;
+  background: white;
+  opacity: 0.3;
+}
+
+.content {
+  text-align: center;
+  padding: 1.5rem;
+  max-width: 400px;
+}
+
+/* GRAIN dinámico */
+.grain {
+  position: absolute;
+  inset: -200%;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.05;
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 0.2s linear;
+}
+
+/* SCANLINES */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.03) 0px,
+    rgba(255,255,255,0.03) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .glitch {
+    font-size: 1.4rem;
+  }
+  .card {
+    max-width: 160px;
+  }
+  .frame {
+    padding: 2rem 2rem;
+  }
+
+  .day16-overlay {
+    height: 100vh;
+  }
+}

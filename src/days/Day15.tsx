@@ -17,12 +17,13 @@ export default function Day15({ onClose }: Day15Props) {
   const [messageIndex, setMessageIndex] = useState(0);
   const [easterEgg, setEasterEgg] = useState(false);
 
+  // 💛 MENSAJES AMICALES
   const messages = [
-    "Listen to the heartbeat",
-    "Each touch has a rhythm",
-    "Not just a sound",
-    "It’s presence",
-    "Stay with it",
+    "Hey",
+    "Solo quería que escucharas esto",
+    "A veces no lo digo",
+    "Pero valoro mucho que estés",
+    "De verdad",
   ];
 
   useEffect(() => {
@@ -72,7 +73,7 @@ export default function Day15({ onClose }: Day15Props) {
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] overflow-hidden">
-      {/* INTRO AUDÍFONOS */}
+      {/* INTRO */}
       <AnimatePresence>
         {showIntro && (
           <motion.div
@@ -89,7 +90,7 @@ export default function Day15({ onClose }: Day15Props) {
               transition={{ duration: 0.8 }}
               className="flex flex-col items-center gap-6"
             >
-              {/* CÍRCULO CON PUNTOS */}
+              {/* CÍRCULO */}
               <div className="relative flex items-center justify-center">
                 <motion.div className="absolute w-24 h-24 md:w-28 md:h-28 rounded-full" />
 
@@ -117,7 +118,7 @@ export default function Day15({ onClose }: Day15Props) {
               </div>
 
               <p className="text-[10px] text-center mt-10 md:text-xs tracking-[0.35em] uppercase text-white/60">
-                Use headphones for the best experience
+                Usa audífonos para una mejor experiencia
               </p>
             </motion.div>
           </motion.div>
@@ -142,7 +143,11 @@ export default function Day15({ onClose }: Day15Props) {
               <motion.p
                 key={messageIndex}
                 initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  scale: pulse ? 1.03 : 1,
+                }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.4 }}
                 className="text-white/90 text-base md:text-xl font-light max-w-md"
@@ -168,11 +173,16 @@ export default function Day15({ onClose }: Day15Props) {
               ❤️
             </motion.div>
 
+            {/* hint sutil */}
+            <p className="text-white/30 text-[10px] tracking-widest uppercase">
+              toca · mantén
+            </p>
+
             <button
               onClick={onClose}
-              className="text-white/40 hover:text-white text-xs"
+              className="text-white/40 hover:text-white text-xs mt-4"
             >
-              Close
+              Cerrar
             </button>
           </div>
 
@@ -193,9 +203,9 @@ export default function Day15({ onClose }: Day15Props) {
                 >
                   💌
                   <br />
-                  This heartbeat
+                  No lo digo mucho
                   <br />
-                  exists for you
+                  pero aquí está
                 </motion.div>
               </motion.div>
             )}
