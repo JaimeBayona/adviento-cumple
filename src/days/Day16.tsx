@@ -1,269 +1,186 @@
-import { useState, useRef } from "react"
-import { motion } from "framer-motion"
+// src/days/Day16.tsx
+import { useEffect, useState, useCallback } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { X } from "lucide-react"
 
-export default function Day16() {
-  const [unlocked, setUnlocked] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [holding, setHolding] = useState(false)
+type Day16Props = {
+  onClose: () => void
+}
 
-  const intervalRef = useRef<number | null>(null)
+type Fragment = {
+  id: number
+  word: string
+  message: string
+}
 
-  const startHold = () => {
-    if (unlocked) return
-    setHolding(true)
+const FRAGMENTS: Fragment[] = [
+  { id: 1, word: "Responsabilidad", message: "Sostener sin que nadie lo pida." },
+  { id: 2, word: "Amor", message: "Dar incluso cuando estás cansada." },
+  { id: 3, word: "Miedo", message: "Seguir adelante aun con él." },
+  { id: 4, word: "Fuerza", message: "No la que grita, la que permanece." },
+  { id: 5, word: "Esperanza", message: "Creer incluso en silencio." }
+]
 
-    let current = 0
+const DESKTOP_POSITIONS = [
+  { x: -120, y: -40 },
+  { x: 120, y: -80 },
+  { x: -150, y: 90 },
+  { x: 140, y: 120 },
+  { x: 0, y: -130 }
+]
 
-    intervalRef.current = window.setInterval(() => {
-      current += 2
-      setProgress(current)
+export default function Day16({ onClose }: Day16Props) {
+  const [revealed, setRevealed] = useState<number[]>([])
+  const [activeMessage, setActiveMessage] = useState<string | null>(null)
 
-      if (current >= 100) {
-        clearInterval(intervalRef.current!)
-        setUnlocked(true)
-        setHolding(false)
-      }
-    }, 30)
-  }
-
-  const cancelHold = () => {
-    if (!unlocked) {
-      clearInterval(intervalRef.current!)
-      setProgress(0)
-      setHolding(false)
+  useEffect(() => {
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = ""
     }
-  }
+  }, [])
+
+  const handleReveal = useCallback((frag: Fragment) => {
+    setRevealed((prev) =>
+      prev.includes(frag.id) ? prev : [...prev, frag.id]
+    )
+    setActiveMessage(frag.message)
+  }, [])
+
+  const completed = revealed.length === FRAGMENTS.length
 
   return (
-    <div className="day16-overlay">
-      <svg className="hud">
-        <circle cx="50%" cy="50%" r="180" />
-        <circle cx="50%" cy="50%" r="260" />
-        <circle cx="50%" cy="50%" r="340" />
+    <section className="fixed inset-0 z-50 bg-[#0b0f1a] overflow-y-auto">
 
-        {/* cuadrados agregados */}
-        <rect x="36%" y="14%" width="380" height="380"/>
-      </svg>
+      {/* ❌ Cerrar */}
+      <button
+        onClick={onClose}
+        className="fixed top-6 right-6 z-50 text-white/60 hover:text-white transition"
+      >
+        <X size={26} />
+      </button>
 
-      {!unlocked ? (
-        <motion.div
-          className="card"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          {/* FRAME SOLO VISUAL */}
-          <div
-            className={`frame ${holding ? "holding" : ""}`}
-            style={{ "--progress": `${progress}%` } as React.CSSProperties}
+      {/* CONTENEDOR CENTRAL */}
+      <div className="mx-auto flex min-h-screen w-full max-w-[500px] flex-col items-center px-6 pt-24 pb-32 text-center">
+
+        <span className="mb-3 text-xs tracking-[0.4em] uppercase text-violet-400">
+          Día 16
+        </span>
+
+        <h1 className="mb-14 text-3xl md:text-4xl font-light text-[#f5f1ec]">
+          El peso de lo invisible
+        </h1>
+
+        {/* 📱 MOBILE + TABLET */}
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
+          {FRAGMENTS.map((frag) => {
+            const isRevealed = revealed.includes(frag.id)
+
+            return (
+              <motion.button
+                key={frag.id}
+                onClick={() => handleReveal(frag)}
+                className="w-full rounded-full border border-violet-400/30 bg-white/5 px-4 py-3 text-sm text-[#f5f1ec] backdrop-blur-md truncate"
+                animate={
+                  isRevealed
+                    ? { opacity: 0.4 }
+                    : { y: [0, -2, 0] }
+                }
+                transition={
+                  isRevealed
+                    ? { duration: 0.3 }
+                    : { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                }
+              >
+                {frag.word}
+              </motion.button>
+            )
+          })}
+        </div>
+
+        {/* 💬 MENSAJE MOBILE */}
+        <AnimatePresence>
+          {activeMessage && !completed && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              className="md:hidden mt-12 w-full"
+            >
+              <div className="rounded-xl bg-white/5 px-6 py-4 backdrop-blur-md border border-violet-400/20">
+                <p className="text-lg text-[#f5f1ec]/90">
+                  {activeMessage}
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* 🖥️ DESKTOP */}
+        <div className="relative hidden md:flex h-[420px] w-full overflow-hidden items-center justify-center">
+          {FRAGMENTS.map((frag, i) => {
+            const isRevealed = revealed.includes(frag.id)
+            const pos = DESKTOP_POSITIONS[i]
+
+            return (
+              <motion.button
+                key={frag.id}
+                onClick={() => handleReveal(frag)}
+                className="absolute left-1/2 top-1/2 rounded-full border border-violet-400/30 bg-white/5 px-5 py-2 text-sm text-[#f5f1ec] backdrop-blur-md whitespace-nowrap"
+                style={{ transform: "translate(-50%, -50%)" }}
+                initial={pos}
+                animate={
+                  isRevealed
+                    ? { opacity: 0.35 }
+                    : { y: [pos.y, pos.y - 4, pos.y] }
+                }
+                transition={
+                  isRevealed
+                    ? { duration: 0.3 }
+                    : { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }
+              >
+                {frag.word}
+              </motion.button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 💬 MENSAJE DESKTOP */}
+      <AnimatePresence>
+        {activeMessage && !completed && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none hidden md:flex fixed inset-0 z-40 items-center justify-center px-6"
           >
-            <p className="glitch" data-text="make me">
-              make me
-            </p>
+            <div className="max-w-md rounded-xl bg-black/60 px-6 py-4 backdrop-blur-md">
+              <p className="text-lg text-[#f5f1ec]/90">
+                {activeMessage}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            <div className="line" />
-          </div>
-
-          {/* BOTÓN REAL */}
-          <div
-            className={`hold-text ${holding ? "active" : ""}`}
-            onMouseDown={startHold}
-            onMouseUp={cancelHold}
-            onMouseLeave={cancelHold}
-            onTouchStart={startHold}
-            onTouchEnd={cancelHold}
+      {/* 🌒 FINAL */}
+      <AnimatePresence>
+        {completed && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="pointer-events-none fixed inset-0 flex items-center justify-center text-center text-violet-400 text-2xl md:text-3xl font-light"
           >
-            CLICK & HOLD
-          </div>
-        </motion.div>
-      ) : (
-        <motion.div
-          className="content"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          <h2 className="glitch" data-text="Unlocked">
-            Unlocked
-          </h2>
-          <p>
-            Hoy quiero recordarte que incluso en los días más oscuros,
-            sigues siendo luz ✨
-          </p>
-        </motion.div>
-      )}
+            Y aun así,
+            <br />
+            sigues avanzando.
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <style>{`
-        .day16-overlay {
-          position: fixed;
-          inset: 0;
-          z-index: 9999;
-          background: radial-gradient(circle at center, #111 0%, #000 80%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          color: white;
-          font-family: Arial, sans-serif;
-        }
-
-        .hud {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          opacity: 0.04;
-        }
-
-        .hud circle,
-        .hud rect {
-          stroke: white;
-          fill: none;
-          stroke-width: 1;
-        }
-
-        .card {
-          text-align: center;
-          width: 90%;
-          max-width: 220px;
-        }
-
-        .frame {
-          position: relative;
-          padding: 4rem 2rem;
-          background: rgba(255,255,255,0.02);
-          transition: transform 0.1s ease;
-        }
-
-        /* vibración mientras sostiene */
-        .holding {
-          animation: shake 0.2s infinite;
-        }
-
-        @keyframes shake {
-          0% { transform: translate(0); }
-          25% { transform: translate(-1px, 1px); }
-          50% { transform: translate(1px, -1px); }
-          75% { transform: translate(-1px, -1px); }
-          100% { transform: translate(0); }
-        }
-
-        /* PROGRESS EN BORDE */
-        .frame::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          padding: 1.5px;
-          background: conic-gradient(
-            white var(--progress),
-            rgba(255,255,255,0.08) var(--progress)
-          );
-          -webkit-mask:
-            linear-gradient(#000 0 0) content-box,
-            linear-gradient(#000 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          pointer-events: none;
-        }
-
-        /* BOTÓN ESTÉTICO */
-        .hold-text {
-          margin-top: 2rem;
-          font-size: 0.75rem;
-          letter-spacing: 4px;
-          opacity: 0.7;
-          display: inline-block;
-          padding: 0.5rem 0;
-          border-bottom: 3px solid #FFFFFF;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .hold-text.active {
-          border-color: white;
-          background: rgba(255,255,255,0.05);
-        }
-
-        /* GLITCH */
-        .glitch {
-          position: relative;
-          font-size: 2.2rem;
-          font-weight: 600;
-          letter-spacing: 6px;
-          text-transform: uppercase;
-          animation: flicker 4s infinite;
-        }
-
-        .glitch::before,
-        .glitch::after {
-          content: attr(data-text);
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          opacity: 0.8;
-        }
-
-        .glitch::before {
-          color: #ff00c8;
-          z-index: -1;
-          animation: glitchTop 3s infinite steps(2, end);
-          clip-path: inset(0 0 50% 0);
-        }
-
-        .glitch::after {
-          color: #00fff9;
-          z-index: -2;
-          animation: glitchBottom 3s infinite steps(2, end);
-          clip-path: inset(50% 0 0 0);
-        }
-
-        @keyframes glitchTop {
-          0% { transform: translate(0); }
-          5% { transform: translate(-6px, -3px); }
-          10% { transform: translate(4px, 2px); }
-          15% { transform: translate(-2px, 1px); }
-          20% { transform: translate(0); }
-          100% { transform: translate(0); }
-        }
-
-        @keyframes glitchBottom {
-          0% { transform: translate(0); }
-          5% { transform: translate(6px, 3px); }
-          10% { transform: translate(-4px, -2px); }
-          15% { transform: translate(2px, -1px); }
-          20% { transform: translate(0); }
-          100% { transform: translate(0); }
-        }
-
-        @keyframes flicker {
-          0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
-          20%, 24%, 55% { opacity: 0.3; }
-        }
-
-        .line {
-          margin: 2rem auto;
-          width: 60%;
-          height: 1px;
-          background: white;
-          opacity: 0.4;
-        }
-
-        .content {
-          text-align: center;
-          padding: 2rem;
-          max-width: 500px;
-        }
-
-        .content p {
-          margin-top: 1.5rem;
-          opacity: 0.7;
-          line-height: 1.6;
-        }
-
-        @media (max-width: 480px) {
-          .glitch {
-            font-size: 1.6rem;
-          }
-        }
-      `}</style>
-    </div>
+    </section>
   )
 }
