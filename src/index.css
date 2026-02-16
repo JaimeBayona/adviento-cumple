@@ -18,6 +18,11 @@
   src: url("/fonts/Oswald.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "Reenie";
+  src: url("/fonts/ReenieBeanie.ttf") format("truetype");
+}
+
 @import "tailwindcss";
 
 /* === DESIGN TOKENS === */
@@ -43,6 +48,7 @@
   --font-inter: Inter, serif;
   --font-newsreader: Newsreader, serif;
   --font-oswald: Oswald, serif;
+  --font-reenie: Reenie, serif;
 }
 
 body {
