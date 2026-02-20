@@ -329,7 +329,7 @@
 .reactions-container {
   position: absolute;
   bottom: 40px;
-  right: 10px;
+  right: 20px;
   width: 140px;
   pointer-events: none;
   overflow: visible;
