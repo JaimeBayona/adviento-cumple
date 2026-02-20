@@ -61,11 +61,7 @@ export default function FinalContent({ onClose }: Props) {
       animate={{ opacity: 1 }}
       transition={{ duration: 1.5 }}
     >
-      <audio
-        ref={audioRef}
-        src="/audio/letter-theme.mp3"
-        loop
-      />
+      <audio ref={audioRef} src="/audio/letter-theme.mp3" loop />
 
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.98 }}
@@ -99,28 +95,27 @@ export default function FinalContent({ onClose }: Props) {
           </p>
 
           {/* 👇 AQUÍ PEGAS TODO TU TEXTO COMPLETO SIN CAMBIAR NADA */}
-           <p className="mb-8">
-            Porque celebra
-            tu vida, tu historia y todo lo que has llegado a ser. Te escribo
-            esto porque quiero que tengas algo que no se borre, algo que puedas
-            volver a leer cuando estés cansada, cuando dudes de ti misma o
-            cuando simplemente necesites recordar cuánto vales. En estos 26 años
-            no solo has crecido, has resistido y te has reinventado más veces de
-            las que muchos hacen en toda una vida.
+          <p className="mb-8">
+            Porque celebra tu vida, tu historia y todo lo que has llegado a ser.
+            Te escribo esto porque quiero que tengas algo que no se borre, algo
+            que puedas volver a leer cuando estés cansada, cuando dudes de ti
+            misma o cuando simplemente necesites recordar cuánto vales. En estos
+            26 años no solo has crecido, has resistido y te has reinventado más
+            veces de las que muchos hacen en toda una vida.
           </p>
 
           <p className="mb-8">
-            A veces me detengo a recordar cuando éramos más jóvenes, aquellas
-            fiestas en tu casa o las veces que te visitaba y nos dábamos las mil
-            horas hablando y riéndonos de absolutamente todo. No necesitábamos
-            mucho para ser felices, solo nuestras charlas interminables. Quién
-            nos iba a decir en ese entonces que la vida te tenía preparada la
-            misión más importante de todas. Siempre me ha asombrado cómo en ese
-            envase tan pequeñito, porque sí, Marilyn, sigues siendo mi enana
-            favorita, puede caber tanta fuerza. Eres esa mujer de carácter
-            firme, de las que no se dejan pisar y defienden lo suyo con garras,
-            pero que al mismo tiempo tiene una sensibilidad que te desarma. Esa
-            mezcla de fortaleza y ternura es lo que te hace única.
+            A veces me pongo a recordar cuando éramos más jóvenes, esas fiestas
+            en tu casa o cuando iba a verte y nos pasábamos horas hablando y
+            riéndonos de cualquier tontería. No necesitábamos gran cosa para ser
+            felices, solo nuestras conversaciones eternas. Quién iba a pensar en
+            ese entonces que la vida te iba a poner la misión más grande de
+            todas. Siempre me ha sorprendido cómo puedes ser tan pequeñita
+            —porque sí, Marilyn, sigues siendo mi enana favorita— y aun así
+            tener tanta fuerza. Eres una mujer con carácter, de las que no se
+            dejan pisar y defienden lo suyo sin miedo, pero al mismo tiempo
+            tienes una sensibilidad que desarma a cualquiera. Y esa mezcla de
+            fuerza y ternura es lo que te hace diferente.
           </p>
 
           <p className="mb-8">
@@ -155,9 +150,9 @@ export default function FinalContent({ onClose }: Props) {
             Disfruta de tus 26 años y de todo lo que representan, porque tu
             presencia deja huella y tu amor transforma todo lo que toca.
           </p>
-          
+
           <p>Sinceramente</p>
-          
+
           <p>Jaime Bayona</p>
         </article>
 

@@ -100,9 +100,12 @@ export default function NumberReveal({ onComplete }: Props) {
       <AnimatePresence mode="wait">
         <motion.h1
           key={number}
-          className="number-text final-aura"
+          className={`number-text ${number === 26 ? "final-aura number-26" : "number-25"}`}
           initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: impact ? 1.2 : 1 }}
+          animate={{
+            opacity: 1,
+            scale: impact ? 1.2 : 1,
+          }}
           transition={{ duration: 1 }}
         >
           {number}

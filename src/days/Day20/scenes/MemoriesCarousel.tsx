@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import FloatingReactions from "./FloatingReactions"
 
-
 interface Props {
   audioRef: React.RefObject<HTMLAudioElement | null>
   onComplete?: () => void
@@ -16,6 +15,9 @@ export default function MemoriesCarousel({ audioRef, onComplete }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [transitionType, setTransitionType] = useState(0)
 
+  const canvasWakeLock = useRef<any>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
   const photos = useMemo(() => {
     const context = import.meta.glob("/public/memories/*.{jpg,jpeg,png,webp}", {
       eager: true,
@@ -27,13 +29,10 @@ export default function MemoriesCarousel({ audioRef, onComplete }: Props) {
 
   const totalPhotos = photos.length
 
-  // Duración real por foto
-  const secondsPerPhoto = USABLE_TIME / totalPhotos
+  const secondsPerPhoto = totalPhotos > 0 ? USABLE_TIME / totalPhotos : 0
   const intervalMs = secondsPerPhoto * 1000
 
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  // 🎬 Transiciones diferentes
+  // 🎬 Transiciones
   const transitions = [
     {
       initial: { opacity: 0, scale: 1.1 },
@@ -57,7 +56,28 @@ export default function MemoriesCarousel({ audioRef, onComplete }: Props) {
     },
   ]
 
-  // 🎵 Control fade audio
+  // 🔒 Wake Lock (evita que la pantalla se apague)
+  useEffect(() => {
+    const requestWakeLock = async () => {
+      try {
+        if ("wakeLock" in navigator) {
+          canvasWakeLock.current = await (navigator as any).wakeLock.request("screen")
+        }
+      } catch (err) {
+        console.log("Wake Lock error:", err)
+      }
+    }
+
+    requestWakeLock()
+
+    return () => {
+      if (canvasWakeLock.current) {
+        canvasWakeLock.current.release()
+      }
+    }
+  }, [])
+
+  // 🎵 Fade suave del audio
   useEffect(() => {
     if (!audioRef.current) return
 
@@ -65,9 +85,7 @@ export default function MemoriesCarousel({ audioRef, onComplete }: Props) {
 
     const handleTimeUpdate = () => {
       if (audio.currentTime >= TOTAL_AUDIO_SECONDS - FADE_SECONDS) {
-        const remaining =
-          TOTAL_AUDIO_SECONDS - audio.currentTime
-
+        const remaining = TOTAL_AUDIO_SECONDS - audio.currentTime
         const volume = Math.max(remaining / FADE_SECONDS, 0)
         audio.volume = volume
       }
@@ -80,15 +98,24 @@ export default function MemoriesCarousel({ audioRef, onComplete }: Props) {
     }
   }, [audioRef])
 
-  // 🎬 Cambio de fotos
+  // 🎬 Cambio automático de fotos
   useEffect(() => {
     if (totalPhotos === 0) return
 
     intervalRef.current = setInterval(() => {
       setCurrentIndex((prev) => {
+        // Si es la última foto
         if (prev + 1 >= totalPhotos) {
-          clearInterval(intervalRef.current!)
-          setTimeout(() => onComplete?.(), FADE_SECONDS * 1000)
+          if (intervalRef.current) clearInterval(intervalRef.current)
+
+          // Mantener última imagen estable
+          setTransitionType(0)
+
+          // Esperar fade del audio antes de pasar a carta
+          setTimeout(() => {
+            onComplete?.()
+          }, FADE_SECONDS * 1000)
+
           return prev
         }
 
@@ -100,7 +127,7 @@ export default function MemoriesCarousel({ audioRef, onComplete }: Props) {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [totalPhotos, intervalMs, transitions.length, onComplete])
+  }, [totalPhotos, intervalMs, onComplete])
 
   if (!photos.length) return null
 
@@ -113,7 +140,11 @@ export default function MemoriesCarousel({ audioRef, onComplete }: Props) {
           className="memory-image"
           initial={transitions[transitionType].initial}
           animate={transitions[transitionType].animate}
-          exit={transitions[transitionType].exit}
+          exit={
+            currentIndex === totalPhotos - 1
+              ? undefined
+              : transitions[transitionType].exit
+          }
           transition={{
             duration: 0.8,
             ease: [0.22, 1, 0.36, 1],
@@ -121,8 +152,8 @@ export default function MemoriesCarousel({ audioRef, onComplete }: Props) {
         />
       </AnimatePresence>
 
-      {/* 🔥 REACCIONES */}
-    <FloatingReactions audioRef={audioRef} />
+      {/* 🔥 Reacciones flotantes */}
+      <FloatingReactions audioRef={audioRef} />
     </div>
   )
 }

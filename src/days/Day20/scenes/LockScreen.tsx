@@ -88,7 +88,7 @@ export default function LockScreen({ onComplete }: Props) {
         onPointerUp={cancelHold}
         onPointerLeave={cancelHold}
       >
-        CLICK & HOLD
+        PRESIONA Y MANTEN
       </div>
     </div>
   );

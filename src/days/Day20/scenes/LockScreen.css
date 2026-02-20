@@ -67,7 +67,7 @@
 
 .frame {
   position: relative;
-  width: 8.5rem;
+  width: 12.5rem;
   padding: 1.5rem;
   border-radius: 4px;
 }
@@ -109,8 +109,9 @@
 
 .glitch {
   position: relative;
-  font-size: 1rem;
+  font-size: 1.5rem;
   letter-spacing: 6px;
+  text-align: center;
   text-transform: uppercase;
   animation: flicker 4s infinite;
   font-family: "Oswald", sans-serif;

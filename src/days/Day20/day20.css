@@ -33,13 +33,44 @@
 
 .number-text {
   font-size: clamp(6rem, 18vw, 14rem);
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.05em;
+  font-family: var(--font-manrope);
   position: relative;
   z-index: 5;
   text-shadow:
     0 0 20px rgba(255,255,255,0.4),
     0 0 40px rgba(255,255,255,0.2);
+}
+
+/* 25 — más frío / previo al impacto */
+.number-25 {
+  background: linear-gradient(
+    90deg,
+    #e0f2ff,
+    #e0f2ff
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-shadow:
+    0 0 20px rgba(142,197,255,0.6),
+    0 0 40px rgba(142,197,255,0.3);
+}
+
+/* 26 — más cálido / celebración */
+.number-26 {
+  background: linear-gradient(
+    90deg,
+    #eac102,
+    #ffd1dc,
+    #eac102
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: shimmer 4s ease-in-out infinite;
 }
 
 /* Glow detrás del número */
@@ -122,7 +153,8 @@
   overflow: hidden;
 }
 
-.celebration-title {
+.celebration-title span {
+  display: block;
   font-size: clamp(1.8rem, 7vw, 3.5rem);
   font-weight: 400;
   text-align: center;
