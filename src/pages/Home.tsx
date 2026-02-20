@@ -47,7 +47,7 @@ export default function Home() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [isInvalidToken, setIsInvalidToken] = useState(false);
   const [loading, setLoading] = useState(true);
-  const MIN_LOADING_TIME = 700;
+  const MIN_LOADING_TIME = 500;
 
   const [respectDates, setRespectDates] = useState(false);
 
