@@ -28,6 +28,16 @@
   src: url("/fonts/ReenieBeanie.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "Display";
+  src: url("/fonts/PlayfairDisplay.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Display-Italic";
+  src: url("/fonts/RPlayfairDisplay-Italic.ttf") format("truetype");
+}
+
 @import "tailwindcss";
 
 /* === DESIGN TOKENS === */
@@ -55,6 +65,8 @@
   --font-newsreader: Newsreader-italic, serif;
   --font-oswald: Oswald, serif;
   --font-reenie: Reenie, serif;
+  --font-displey: Display, serif;
+  --font-display-italic: Display-Italic, serif;
 }
 
 body {

@@ -5,46 +5,47 @@ interface Props {
   onComplete?: () => void;
 }
 
+type Particle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+};
+
 export default function NumberReveal({ onComplete }: Props) {
   const [number, setNumber] = useState<25 | 26>(25);
-  const [glitching, setGlitching] = useState(false);
   const [impact, setImpact] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const explosionParticles = useRef<Particle[]>([]);
 
-  // ✨ Partículas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const isMobile = window.innerWidth < 768;
-    const particleCount = isMobile ? 40 : 80;
-
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
-    const particles = Array.from({ length: particleCount }).map(() => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.5 + 0.5,
-      speed: Math.random() * 0.3 + 0.1,
-    }));
 
     let animationFrame: number;
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      particles.forEach((p) => {
-        p.y -= p.speed;
-        if (p.y < 0) p.y = canvas.height;
+      explosionParticles.current.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 1;
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,255,255,0.35)";
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${p.life / 60})`;
         ctx.fill();
+
+        if (p.life <= 0) {
+          explosionParticles.current.splice(i, 1);
+        }
       });
 
       animationFrame = requestAnimationFrame(animate);
@@ -54,49 +55,55 @@ export default function NumberReveal({ onComplete }: Props) {
     return () => cancelAnimationFrame(animationFrame);
   }, []);
 
-  // 🎬 Secuencia
+  const triggerExplosion = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const count = window.innerWidth < 768 ? 60 : 120;
+
+    explosionParticles.current = Array.from({ length: count }).map(() => {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 6 + 2;
+
+      return {
+        x: centerX,
+        y: centerY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 60,
+      };
+    });
+  };
+
   useEffect(() => {
-    const timer1 = setTimeout(() => setGlitching(true), 2200);
-
-    const timer2 = setTimeout(() => {
+    const t1 = setTimeout(() => {
       setNumber(26);
-      setGlitching(false);
       setImpact(true);
-    }, 2700);
+      triggerExplosion();
+    }, 2500);
 
-    const timer3 = setTimeout(() => onComplete?.(), 5500);
+    const t2 = setTimeout(() => onComplete?.(), 5500);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
   }, [onComplete]);
 
   return (
     <div className="number-container">
-
       <canvas ref={canvasRef} className="particles" />
-
-      {/* 💥 Flash */}
-      {impact && <div className="flash-impact" />}
-
-      {/* 🌊 Shockwave */}
-      {impact && <div className="shockwave" />}
 
       <AnimatePresence mode="wait">
         <motion.h1
           key={number}
-          className={`number-text 
-            ${glitching ? "glitching" : ""} 
-            ${number === 26 ? "final-aura" : ""}`}
-          initial={{ opacity: 0, scale: 0.6, filter: "blur(20px)" }}
-          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-          exit={{ opacity: 0, scale: 1.4, filter: "blur(15px)" }}
-          transition={{
-            duration: 1.2,
-            ease: [0.16, 1, 0.3, 1],
-          }}
+          className="number-text final-aura"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: impact ? 1.2 : 1 }}
+          transition={{ duration: 1 }}
         >
           {number}
         </motion.h1>
