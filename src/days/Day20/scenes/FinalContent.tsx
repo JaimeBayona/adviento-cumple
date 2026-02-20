@@ -125,7 +125,7 @@ export default function FinalContent({ onClose }: Props) {
             importante, y es algo que siempre llevaré conmigo, pero quiero que
             sepas con absoluta claridad que me alegra de verdad que tengas a tu
             hija. Ella llegó a un corazón grande y a unos brazos capaces de amar
-            sin medida. Tienes a alguien que va a enseñarle a ser fuerte, pero
+            sin medida. Tiene a alguien que va a enseñarle a ser fuerte, pero
             también a ser buena y firme. Verte convertirte en mamá, incluso
             desde la distancia, me hizo respetarte aún más, porque no cualquiera
             da ese paso con la entereza con la que tú lo has hecho.
